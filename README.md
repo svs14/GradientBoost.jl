@@ -6,8 +6,8 @@ This package covers the gradient boosting paradigm: a framework that builds
 additive expansions based on any fitting criteria.
 
 In machine learning parlance, this is typically referred to as
-gradient boosting machines, generalized boosting machines and 
-stochastic gradient boosting.
+gradient boosting machines, generalized boosted models and stochastic gradient
+boosting.
 
 Normally, gradient boosting implementations cover a specific algorithm: gradient
 boosted decision trees. The design of this library is to cover this, along with
