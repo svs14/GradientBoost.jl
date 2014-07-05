@@ -1,5 +1,14 @@
-using GradientBoost
-using Base.Test
+# Run all tests.
+module TestRunner
 
-# write your own tests here
-@test 1 == 1
+using FactCheck
+
+include("test_util.jl")
+include("test_loss.jl")
+include("test_gb.jl")
+include("test_gb_dt.jl")
+include("test_gb_learner.jl")
+
+exitstatus()
+
+end # module

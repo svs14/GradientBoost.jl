@@ -1,5 +1,10 @@
 module GradientBoost
 
-# package code goes here
+# Load sources files
+include("util.jl")
+include("loss.jl")
+include("gb.jl")
+include("gb_learner.jl")
+include("gb_dt.jl")
 
 end # module
