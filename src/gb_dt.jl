@@ -102,11 +102,9 @@ end
 
 # Returns respective node of instance.
 function instance_to_node(tree::Node, instance)
-  # Code retrofitted from DecisionTree.jl
+  # Code adapted from DecisionTree.jl
   features = instance
-  if tree.featval == nothing
-    return instance_to_node(tree.left, features)
-  elseif features[tree.featid] < tree.featval
+  if tree.featval == nothing || features[tree.featid] < tree.featval
     return instance_to_node(tree.left, features)
   else
     return instance_to_node(tree.right, features)
