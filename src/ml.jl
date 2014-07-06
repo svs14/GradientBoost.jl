@@ -6,7 +6,6 @@ importall GradientBoost.GB
 importall GradientBoost.GBDecisionTree
 
 export GBProblem,
-       GBModel,
        fit!,
        predict!,
        GaussianLoss,
@@ -25,6 +24,14 @@ type GBProblem
   function GBProblem(algorithm, output=:regression)
     new(algorithm, output, nothing)
   end
+end
+
+function fit!(gbp::GBProblem, instances, labels)
+  error("Instance type: $(typeof(instances)) 
+    and label type: $(typeof(labels)) together is currently not supported.")
+end
+function predict!(gbp::GBProblem, instances)
+  error("Instance type: $(typeof(instances)) is currently not supported.")
 end
 
 function fit!(gbp::GBProblem, 

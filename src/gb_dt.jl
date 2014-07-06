@@ -31,7 +31,7 @@ type GBDT <: GradientBoost
   end
 end
 
-function build_base_func(
+function GB.build_base_func(
   gb::GBDT,
   instances,
   labels,

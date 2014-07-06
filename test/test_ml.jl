@@ -16,12 +16,22 @@ labels = [
 ]
 
 facts("Machine Learning API") do
+  context("not implemented functions throw an error") do
+    gbp = GBProblem(GBDT(), :regression)
+    instances = 1
+    labels = 1
+
+    @fact_throws fit!(gbp, instances, labels)
+    @fact_throws predict!(gbp, instances)
+  end
+
   context("fit! on Float64 arrays works") do
     gbp = GBProblem(GBDT(), :regression)
     @fact gbp.model => nothing
     fit!(gbp, instances, labels)
     @fact gbp.model => not(nothing)
   end
+
   context("predict! on Float64 arrays works") do
     gbp = GBProblem(GBDT(BernoulliLoss()), :class)
     fit!(gbp, instances, labels)

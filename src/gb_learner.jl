@@ -25,7 +25,7 @@ type GBL <: GradientBoost
   end
 end
 
-function build_base_func(
+function GB.build_base_func(
     gb::GBL,
     instances,
     labels,

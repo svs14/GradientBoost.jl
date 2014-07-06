@@ -7,13 +7,13 @@ importall GradientBoost.LossFunctions
 type DummyLearner; end
 type StubLearner; end
 
-function learner_fit(lf::LossFunction, learner::StubLearner, 
+function GBLearner.learner_fit(lf::LossFunction, learner::StubLearner, 
   instances, labels)
 
   return (instance) -> mean(instance)
 end
 
-function learner_predict(lf::LossFunction, learner::StubLearner, 
+function GBLearner.learner_predict(lf::LossFunction, learner::StubLearner, 
   model, instances)
 
   pred_func = model
