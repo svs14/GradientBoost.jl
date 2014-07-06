@@ -90,14 +90,14 @@ facts("GB Learner") do
     lf = LaplaceLoss()
     dummy_vec = [0.0,0.0,0.0,0.0]
     labels = [0.0,1.0,2.0,3.0]
-    psuedo = [3.0,2.0,1.0,0.0]
+    psuedo_pred = [3.0,2.0,1.0,0.0]
     prev_func_pred = [1.0,0.0,1.0,0.0]
-    expected = -1.0
+    expected = -0.333333
 
     actual = GBLearner.fit_best_constant(
-      lf, labels, dummy_vec, dummy_vec, prev_func_pred
+      lf, labels, dummy_vec, psuedo_pred, prev_func_pred
     )
-    @fact actual => expected
+    @fact actual => roughly(expected)
   end
   context("BernoulliLoss fit_best_constant throws error") do
     lf = BernoulliLoss()

@@ -100,10 +100,18 @@ facts("GB Decision Tree") do
   context("BernoulliLoss fit_best_constant works") do
     lf = BernoulliLoss()
     dummy_vec = [0.0,0.0,0.0,0.0]
+
     labels = [0.0,0.0,1.0,1.0]
     psuedo = [0.0,0.5,0.0,0.5]
     expected = -2.0
+    actual = GBDecisionTree.fit_best_constant(
+      lf, labels, psuedo, dummy_vec, dummy_vec
+    )
+    @fact actual => expected
 
+    labels = [1.0,1.0,1.0,1.0]
+    psuedo = [1.0,1.0,1.0,1.0]
+    expected = 0.0
     actual = GBDecisionTree.fit_best_constant(
       lf, labels, psuedo, dummy_vec, dummy_vec
     )
