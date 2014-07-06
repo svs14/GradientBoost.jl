@@ -71,8 +71,8 @@ facts("Gradient Boost") do
 
   context("predict works") do
     expected = [
-      2.0
-      2.5
+      3.0
+      3.5
     ]
     sgb = StubGradientBoost(GaussianLoss(), 1.0, 0.5, 1)
     model = stochastic_gradient_boost(sgb, sgb_instances, sgb_labels)

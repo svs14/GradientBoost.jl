@@ -37,6 +37,17 @@ facts("Util functions") do
     values = [1, 2, 3, 4, 5]
     @fact weighted_median(weights, values) => 3
   end
+
+  context("holdout returns proportional partitions") do
+    n = 10
+    right_prop = 0.3
+    (left, right) = holdout(n, right_prop)
+
+    @fact size(left, 1) => n - (n * right_prop)
+    @fact size(right, 1) => n * right_prop
+    @fact intersect(left, right) => isempty
+    @fact size(union(left, right), 1) => n
+  end
 end
 
 end # module

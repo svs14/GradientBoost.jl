@@ -9,6 +9,7 @@ include("test_gb.jl")
 include("test_gb_dt.jl")
 include("test_gb_learner.jl")
 include("test_ml.jl")
+include("test_system.jl")
 
 exitstatus()
 

@@ -75,6 +75,38 @@ facts("GB Learner") do
     expected = { 1.0, 3.0 }
     @fact predictions => roughly(expected)
   end
+
+  context("GaussianLoss fit_best_constant works") do
+    lf = GaussianLoss()
+    dummy_vec = [0.0,0.0,0.0,0.0]
+    expected = 1.0
+
+    actual = GBLearner.fit_best_constant(
+      lf, dummy_vec, dummy_vec, dummy_vec, dummy_vec
+    )
+    @fact actual => expected
+  end
+  context("LaplaceLoss fit_best_constant works") do
+    lf = LaplaceLoss()
+    dummy_vec = [0.0,0.0,0.0,0.0]
+    labels = [0.0,1.0,2.0,3.0]
+    psuedo = [3.0,2.0,1.0,0.0]
+    prev_func_pred = [1.0,0.0,1.0,0.0]
+    expected = -1.0
+
+    actual = GBLearner.fit_best_constant(
+      lf, labels, dummy_vec, dummy_vec, prev_func_pred
+    )
+    @fact actual => expected
+  end
+  context("BernoulliLoss fit_best_constant throws error") do
+    lf = BernoulliLoss()
+    dummy_vec = [0.0,0.0,0.0,0.0]
+
+    @fact_throws GBLearner.fit_best_constant(
+      lf, dummy_vec, dummy_vec, dummy_vec, dummy_vec
+    )
+  end
 end
 
 end # module

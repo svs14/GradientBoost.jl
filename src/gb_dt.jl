@@ -19,7 +19,7 @@ type GBDT <: GradientBoost
   tree_options::Dict
 
   function GBDT(loss_function=GaussianLoss(),
-    sampling_rate=0.5, learning_rate=0.01, 
+    sampling_rate=0.6, learning_rate=0.1, 
     num_iterations=100, tree_options=Dict())
 
     default_options = {
@@ -52,15 +52,17 @@ function GB.build_base_func(
   inst_node_index = InstanceNodeIndex(model, instances)
   function val_func(node)
     inst_ind = inst_node_index.n2i[node]
-    val = fit_best_constant(gb.loss_function,
-      labels[inst_ind],
-      psuedo[inst_ind],
-      psuedo_pred[inst_ind],
-      prev_func_pred[inst_ind]
-    )
+
     # If loss function is Gaussian, we don't need need to change values.
     if typeof(gb.loss_function) <: GaussianLoss
       val = node.majority
+    else
+      val = fit_best_constant(gb.loss_function,
+        labels[inst_ind],
+        psuedo[inst_ind],
+        psuedo_pred[inst_ind],
+        prev_func_pred[inst_ind]
+      )
     end
 
     val
@@ -126,6 +128,25 @@ function update_regions!{T}(n2v::Dict{Leaf, T}, node::Node, val_func::Function)
 end
 function update_regions!{T}(n2v::Dict{Leaf, T}, leaf::Leaf, val_func::Function)
   n2v[leaf] = val_func(leaf)
+end
+
+# Loss function fits
+function fit_best_constant(lf::LaplaceLoss,
+  labels, psuedo, psuedo_pred, prev_func_pred)
+
+  values = labels .- prev_func_pred
+  median(values)
+end
+function fit_best_constant(lf::BernoulliLoss,
+  labels, psuedo, psuedo_pred, prev_func_pred)
+
+  num = sum(psuedo)
+  denom = sum((labels .- psuedo) .* (1 .- labels .+ psuedo))
+  if denom == 0.0
+    return 0.0
+  else
+    return num / denom
+  end
 end
 
 end # module

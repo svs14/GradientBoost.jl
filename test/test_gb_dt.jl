@@ -25,7 +25,12 @@ end
 
 facts("GB Decision Tree") do
   context("build_base_func works") do
-    gb = GBDT()
+    gb = GBDT(
+      GaussianLoss(),
+      0.5,
+      0.01,
+      100
+    )
     prev_func_pred = 
       fill(minimizing_scalar(gb.loss_function, labels), size(instances, 1))
     psuedo = negative_gradient(
@@ -78,6 +83,31 @@ facts("GB Decision Tree") do
 
       @fact old_pred ./ 2.0 => new_pred
     end
+  end
+
+  context("LaplaceLoss fit_best_constant works") do
+    lf = LaplaceLoss()
+    dummy_vec = [0.0,0.0,0.0,0.0]
+    labels = [0.0,1.0,2.0,3.0]
+    prev_func_pred = [3.0,2.0,1.0,0.0]
+    expected = 0.0
+
+    actual = GBDecisionTree.fit_best_constant(
+      lf, labels, dummy_vec, dummy_vec, prev_func_pred
+    )
+    @fact actual => expected
+  end
+  context("BernoulliLoss fit_best_constant works") do
+    lf = BernoulliLoss()
+    dummy_vec = [0.0,0.0,0.0,0.0]
+    labels = [0.0,0.0,1.0,1.0]
+    psuedo = [0.0,0.5,0.0,0.5]
+    expected = -2.0
+
+    actual = GBDecisionTree.fit_best_constant(
+      lf, labels, psuedo, dummy_vec, dummy_vec
+    )
+    @fact actual => expected
   end
 end
 

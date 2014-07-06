@@ -29,35 +29,43 @@ end
 # @param labels Labels.
 # @return Gradient boost model.
 function stochastic_gradient_boost(gb::GradientBoost, instances, labels)
-  # Initialize base functions and psuedo labels
+  # Initialize base functions collection
   num_iterations = gb.num_iterations
   base_funcs = Array(Function, num_iterations+1)
-  base_funcs[1] = (instances) ->
-    fill(minimizing_scalar(gb.loss_function, labels), size(instances, 1))
 
-  # Build base functions
-  stage_base_func = base_funcs[1]
-  psuedo = labels
+  # Create initial base function
+  initial_val = minimizing_scalar(gb.loss_function, labels)
+  initial_base_func = (instances) -> fill(initial_val, size(instances, 1))
+
+  # Add initial base function to ensemble
+  base_funcs[1] = initial_base_func
+
+  # Build consecutive base functions
+  prev_func_pred = initial_base_func(instances)
   for iter_ind = 2:num_iterations+1
-    # Update residuals
-    prev_func_pred = stage_base_func(instances)
+    # Obtain current residuals
     psuedo = negative_gradient(
       gb.loss_function,
-      psuedo,
-      gb.learning_rate .* prev_func_pred
+      labels,
+      prev_func_pred
     )
 
     # Sample instances
     stage_sample_ind = create_sample_indices(gb, instances, labels)
 
-    # Add optimal base function to ensemble
+    # Build current base function
     stage_base_func = build_base_func(
       gb,
-      instances[stage_sample_ind,:],
+      instances[stage_sample_ind, :],
       labels[stage_sample_ind],
       prev_func_pred[stage_sample_ind],
       psuedo[stage_sample_ind]
     )
+
+    # Update previous function prediction
+    prev_func_pred .+= gb.learning_rate .* stage_base_func(instances)
+
+    # Add optimal base function to ensemble
     base_funcs[iter_ind] = stage_base_func
   end
 
@@ -69,9 +77,8 @@ function fit(gb::GradientBoost, instances, labels)
   stochastic_gradient_boost(gb, instances, labels)
 end
 function predict(gb_model::GBModel, instances)
-  output_type = eltype(gb_model.base_funcs[1](instances))
-  outputs = zeros(output_type, size(instances, 1))
-  for i = 1:length(gb_model.base_funcs)
+  outputs = gb_model.base_funcs[1](instances)
+  for i = 2:length(gb_model.base_funcs)
     outputs .+= gb_model.learning_rate .* gb_model.base_funcs[i](instances)
   end
   return outputs

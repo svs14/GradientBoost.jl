@@ -50,28 +50,6 @@ function test_minimizing_scalar(lf::LossFunction,
     @fact minimizing_scalar(lf, y_examples[i]) => roughly(expected[i])
   end
 end
-function test_fit_best_constant(lf::LossFunction,
-  y_examples, expected)
-
-  prev_func_pred = Array(Any, size(y_examples, 1))
-  psuedo = Array(Any, size(y_examples, 1))
-  psuedo_pred = Array(Any, size(y_examples, 1))
-  for i = 1:size(y_examples, 1)
-    prev_func_pred[i] = minimizing_scalar(lf, y_examples[i])
-    psuedo[i] = negative_gradient(lf, y_examples[i], prev_func_pred[i])
-    psuedo_pred[i] = psuedo[i] ./ 2.0
-  end
-
-  for i = 1:size(y_examples, 1)
-    @fact fit_best_constant(
-      lf, 
-      y_examples[i],
-      psuedo[i],
-      psuedo_pred[i],
-      prev_func_pred[i]
-    ) => roughly(expected[i])
-  end
-end
 
 facts("Loss functions") do
   context("not implemented functions throw an error") do
@@ -81,9 +59,6 @@ facts("Loss functions") do
     @fact_throws loss(dlf, emp_vec, emp_vec)
     @fact_throws negative_gradient(dlf, emp_vec, emp_vec)
     @fact_throws minimizing_scalar(dlf, emp_vec)
-    @fact_throws fit_best_constant(dlf,
-      emp_vec, emp_vec, emp_vec, emp_vec
-    )
   end
 
   context("GaussianLoss loss works") do
@@ -101,11 +76,6 @@ facts("Loss functions") do
     expected = { 1.0, 0.5, 0.0, 0.0, -1.0 }
     test_minimizing_scalar(lf, y_examples, expected)
   end
-  context("GaussianLoss fit_best_constant works") do
-    lf = GaussianLoss()
-    expected = { 1.0, 1.0, 1.0, 1.0, 1.0 }
-    test_fit_best_constant(lf, y_examples, expected)
-  end
 
   context("LaplaceLoss loss works") do
     lf = LaplaceLoss()
@@ -121,11 +91,6 @@ facts("Loss functions") do
     lf = LaplaceLoss()
     expected = { 1.0, 0.5, 0.0, 0.0, -1.0 }
     test_minimizing_scalar(lf, y_examples, expected)
-  end
-  context("LaplaceLoss fit_best_constant works") do
-    lf = LaplaceLoss()
-    expected = { 0.0, 1.0, 0.0, 2.0, 0.0}
-    test_fit_best_constant(lf, y_examples, expected)
   end
 
   context("BernoulliLoss loss works") do
@@ -150,11 +115,6 @@ facts("Loss functions") do
     lf = BernoulliLoss()
     expected = { Inf, 0.0, 0.0, -Inf, -Inf}
     test_minimizing_scalar(lf, bern_y_examples, expected)
-  end
-  context("BernoulliLoss fit_best_constant works") do
-    lf = BernoulliLoss()
-    expected = { 0.0, 0.0, 0.0, 0.0, 0.0}
-    test_fit_best_constant(lf, bern_y_examples, expected)
   end
 end
 

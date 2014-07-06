@@ -8,6 +8,7 @@ export GBL,
 
 importall GradientBoost.GB
 importall GradientBoost.LossFunctions
+importall GradientBoost.Util
 
 # Gradient boosted base learner algorithm.
 type GBL <: GradientBoost
@@ -66,6 +67,35 @@ end
 # @return Predictions.
 function learner_predict(lf::LossFunction, learner, model, instances)
   error("This function must be implemented by $(learner) for $(lf)")
+end
+
+# Loss function fits
+function fit_best_constant(lf::GaussianLoss,
+  labels, psuedo, psuedo_pred, prev_func_pred)
+
+  # No refitting required
+  1.0
+end
+
+function fit_best_constant(lf::LaplaceLoss,
+  labels, psuedo, psuedo_pred, prev_func_pred)
+
+  weights = abs(psuedo_pred)
+  values = labels .- prev_func_pred
+
+  for i = 1:length(labels)
+    if weights[i] != 0.0
+      values[i] /= psuedo_pred[i]
+    end
+  end
+
+  weighted_median(weights, values)
+end
+function fit_best_constant(lf::BernoulliLoss,
+  labels, psuedo, psuedo_pred, prev_func_pred)
+
+  # TODO(svs14): Add fit_best_constant (BernoulliLoss) for base learner.
+  error("$(typeof(lf)) is not implemented for GBLearner.")
 end
 
 end # module
