@@ -53,7 +53,7 @@ function stochastic_gradient_boost(gb::GradientBoost, instances, labels)
     # Add optimal base function to ensemble
     stage_base_func = build_base_func(
       gb,
-      instances[stage_sample_ind],
+      instances[stage_sample_ind,:],
       labels[stage_sample_ind],
       prev_func_pred[stage_sample_ind],
       psuedo[stage_sample_ind]
@@ -69,7 +69,8 @@ function fit(gb::GradientBoost, instances, labels)
   stochastic_gradient_boost(gb, instances, labels)
 end
 function predict(gb_model::GBModel, instances)
-  outputs = zeros(size(instances, 1))
+  output_type = eltype(gb_model.base_funcs[1](instances))
+  outputs = zeros(output_type, size(instances, 1))
   for i = 1:length(gb_model.base_funcs)
     outputs .+= gb_model.learning_rate .* gb_model.base_funcs[i](instances)
   end

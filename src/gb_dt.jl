@@ -58,12 +58,15 @@ function build_base_func(
       psuedo_pred[inst_ind],
       prev_func_pred[inst_ind]
     )
-    # If loss function is Guassian, we don't need need to change values.
+    # If loss function is Gaussian, we don't need need to change values.
     if typeof(gb.loss_function) <: GaussianLoss
       val = node.majority
     end
+
+    val
   end
-  n2v = Dict{Leaf, Any}()
+  val_type = eltype(prev_func_pred)
+  n2v = Dict{Leaf, val_type}()
   update_regions!(n2v, model, val_func)
 
   # Prediction function
@@ -73,6 +76,7 @@ function build_base_func(
       n2v[instance_to_node(model, instances[i,:])]
       for i in 1:num_instances
     ]
+    predictions
   end
 
   # Produce function that delegates prediction to model
@@ -116,11 +120,11 @@ end
 
 # Update region by having updated leaf value encoded
 # in a leaf-to-value mapping.
-function update_regions!(n2v::Dict{Leaf, Any}, node::Node, val_func::Function)
+function update_regions!{T}(n2v::Dict{Leaf, T}, node::Node, val_func::Function)
   update_regions!(n2v, node.left, val_func)
   update_regions!(n2v, node.right, val_func)
 end
-function update_regions!(n2v::Dict{Leaf, Any}, leaf::Leaf, val_func::Function)
+function update_regions!{T}(n2v::Dict{Leaf, T}, leaf::Leaf, val_func::Function)
   n2v[leaf] = val_func(leaf)
 end
 
