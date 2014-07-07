@@ -178,3 +178,23 @@ Loss functions can be found in `GradientBoost.LossFunctions`.
 
 An relatively light algorithm 
 that implements this is `GBLearner`, found in `src/gb_learner.jl`.
+
+## Misc
+
+The links provided below will only work if you are viewing this in the GitHub repository.
+
+### Changes
+
+See [CHANGELOG.yml](CHANGELOG.yml).
+
+### Future Work
+
+See [FUTUREWORK.md](FUTUREWORK.md).
+
+### Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md).
+
+### License
+
+MIT "Expat" License. See [LICENSE.md](LICENSE.md).
