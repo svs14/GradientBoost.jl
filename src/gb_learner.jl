@@ -19,8 +19,8 @@ type GBL <: GradientBoost
   learner
 
   function GBL(learner, loss_function=GaussianLoss(),
-    sampling_rate=0.5, learning_rate=0.1, 
-    num_iterations=10)
+    sampling_rate=0.8, learning_rate=0.1, 
+    num_iterations=100)
 
     new(loss_function, sampling_rate, learning_rate, num_iterations, learner)
   end

@@ -4,14 +4,19 @@ module ML
 importall GradientBoost.LossFunctions
 importall GradientBoost.GB
 importall GradientBoost.GBDecisionTree
+importall GradientBoost.GBLearner
 
 export GBProblem,
        fit!,
        predict!,
+       LossFunction,
        GaussianLoss,
        LaplaceLoss,
        BernoulliLoss,
-       GBDT
+       GBDT,
+       GBL,
+       learner_fit,
+       learner_predict
 
 
 # Gradient boosting problem.
