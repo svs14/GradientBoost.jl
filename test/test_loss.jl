@@ -61,47 +61,47 @@ facts("Loss functions") do
     @fact_throws minimizing_scalar(dlf, emp_vec)
   end
 
-  context("GaussianLoss loss works") do
-    lf = GaussianLoss()
+  context("LeastSquares loss works") do
+    lf = LeastSquares()
     expected = { 0.0, 0.5, 1.0, 2.0, 4.0 }
     test_loss(lf, y_examples, y_pred_examples, expected)
   end
-  context("GaussianLoss negative_gradient works") do
-    lf = GaussianLoss()
+  context("LeastSquares negative_gradient works") do
+    lf = LeastSquares()
     expected = { [0,0], [0,-1], [-1,-1], [-2,0], [-2,-2] }
     test_negative_gradient(lf, y_examples, y_pred_examples, expected)
   end
-  context("GaussianLoss minimizing_scalar works") do
-    lf = GaussianLoss()
+  context("LeastSquares minimizing_scalar works") do
+    lf = LeastSquares()
     expected = { 1.0, 0.5, 0.0, 0.0, -1.0 }
     test_minimizing_scalar(lf, y_examples, expected)
   end
 
-  context("LaplaceLoss loss works") do
-    lf = LaplaceLoss()
+  context("LeastAbsoluteDeviation loss works") do
+    lf = LeastAbsoluteDeviation()
     expected = { 0.0, 0.5, 1.0, 1.0, 2.0 }
     test_loss(lf, y_examples, y_pred_examples, expected)
   end
-  context("LaplaceLoss negative_gradient works") do
-    lf = LaplaceLoss()
+  context("LeastAbsoluteDeviation negative_gradient works") do
+    lf = LeastAbsoluteDeviation()
     expected = { [0,0], [0,-1], [-1,-1], [-1,0], [-1,-1] }
     test_negative_gradient(lf, y_examples, y_pred_examples, expected)
   end
-  context("LaplaceLoss minimizing_scalar works") do
-    lf = LaplaceLoss()
+  context("LeastAbsoluteDeviation minimizing_scalar works") do
+    lf = LeastAbsoluteDeviation()
     expected = { 1.0, 0.5, 0.0, 0.0, -1.0 }
     test_minimizing_scalar(lf, y_examples, expected)
   end
 
-  context("BernoulliLoss loss works") do
-    lf = BernoulliLoss()
+  context("BinomialDeviance loss works") do
+    lf = BinomialDeviance()
     expected = { 
       0.626523, 1.626523, 1.626523, 2.626523, 2.626523,
     }
     test_loss(lf, bern_y_examples, y_pred_examples, expected)
   end
-  context("BernoulliLoss negative_gradient works") do
-    lf = BernoulliLoss()
+  context("BinomialDeviance negative_gradient works") do
+    lf = BinomialDeviance()
     expected = { 
       [0.268941, 0.268941], 
       [0.268941, -0.731059], 
@@ -111,8 +111,8 @@ facts("Loss functions") do
     }
     test_negative_gradient(lf, bern_y_examples, y_pred_examples, expected)
   end
-  context("BernoulliLoss minimizing_scalar works") do
-    lf = BernoulliLoss()
+  context("BinomialDeviance minimizing_scalar works") do
+    lf = BinomialDeviance()
     expected = { Inf, 0.0, 0.0, -Inf, -Inf}
     test_minimizing_scalar(lf, bern_y_examples, expected)
   end

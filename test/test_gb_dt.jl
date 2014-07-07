@@ -26,7 +26,7 @@ end
 facts("GB Decision Tree") do
   context("build_base_func works") do
     gb = GBDT(
-      GaussianLoss(),
+      LeastSquares(),
       0.5,
       0.01,
       100
@@ -85,8 +85,8 @@ facts("GB Decision Tree") do
     end
   end
 
-  context("LaplaceLoss fit_best_constant works") do
-    lf = LaplaceLoss()
+  context("LeastAbsoluteDeviation fit_best_constant works") do
+    lf = LeastAbsoluteDeviation()
     dummy_vec = [0.0,0.0,0.0,0.0]
     labels = [0.0,1.0,2.0,3.0]
     prev_func_pred = [3.0,2.0,1.0,0.0]
@@ -97,8 +97,8 @@ facts("GB Decision Tree") do
     )
     @fact actual => expected
   end
-  context("BernoulliLoss fit_best_constant works") do
-    lf = BernoulliLoss()
+  context("BinomialDeviance fit_best_constant works") do
+    lf = BinomialDeviance()
     dummy_vec = [0.0,0.0,0.0,0.0]
 
     labels = [0.0,0.0,1.0,1.0]

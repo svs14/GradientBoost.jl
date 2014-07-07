@@ -7,9 +7,9 @@ export LossFunction,
        loss,
        negative_gradient,
        minimizing_scalar,
-       GaussianLoss,
-       LaplaceLoss,
-       BernoulliLoss
+       LeastSquares,
+       LeastAbsoluteDeviation,
+       BinomialDeviance
 
 # Loss function.
 abstract LossFunction
@@ -37,50 +37,50 @@ negative_gradient(lf::LossFunction, y, y_pred) = err_must_be_overriden()
 # @return Scalar value.
 minimizing_scalar(lf::LossFunction, y) = err_must_be_overriden()
 
-# Gaussian (Least Squares)
-type GaussianLoss <: LossFunction; end
+# LeastSquares
+type LeastSquares <: LossFunction; end
 
-function loss(lf::GaussianLoss, y, y_pred)
+function loss(lf::LeastSquares, y, y_pred)
   mean((y .- y_pred) .^ 2.0)
 end
 
-function negative_gradient(lf::GaussianLoss, y, y_pred)
+function negative_gradient(lf::LeastSquares, y, y_pred)
   y .- y_pred
 end
 
-function minimizing_scalar(lf::GaussianLoss, y)
+function minimizing_scalar(lf::LeastSquares, y)
   mean(y)
 end
 
 
-# Laplace (Least Absolute Deviation)
-type LaplaceLoss <: LossFunction; end
+# LeastAbsoluteDeviation
+type LeastAbsoluteDeviation <: LossFunction; end
 
-function loss(lf::LaplaceLoss, y, y_pred)
+function loss(lf::LeastAbsoluteDeviation, y, y_pred)
   mean(abs(y .- y_pred))
 end
 
-function negative_gradient(lf::LaplaceLoss, y, y_pred)
+function negative_gradient(lf::LeastAbsoluteDeviation, y, y_pred)
   sign(y .- y_pred)
 end
 
-function minimizing_scalar(lf::LaplaceLoss, y)
+function minimizing_scalar(lf::LeastAbsoluteDeviation, y)
   median(y)
 end
 
 
-# Bernoulli Loss (Two Classes {0,1})
-type BernoulliLoss <: LossFunction; end
+# Binomial Deviance (Two Classes {0,1})
+type BinomialDeviance <: LossFunction; end
 
-function loss(lf::BernoulliLoss, y, y_pred)
+function loss(lf::BinomialDeviance, y, y_pred)
   -2.0 .* mean(y .* y_pred .- log(1.0 .+ exp(y_pred)))
 end
 
-function negative_gradient(lf::BernoulliLoss, y, y_pred)
+function negative_gradient(lf::BinomialDeviance, y, y_pred)
   y .- 1.0 ./ (1.0 .+ exp(-y_pred))
 end
 
-function minimizing_scalar(lf::BernoulliLoss, y)
+function minimizing_scalar(lf::BinomialDeviance, y)
   y_sum = sum(y)
   y_length = length(y)
   log(y_sum / (y_length - y_sum))

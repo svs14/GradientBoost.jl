@@ -33,7 +33,7 @@ facts("Machine Learning API") do
   end
 
   context("predict! on Float64 arrays works") do
-    gbp = GBProblem(GBDT(BernoulliLoss()), :class)
+    gbp = GBProblem(GBDT(BinomialDeviance()), :class)
     fit!(gbp, instances, labels)
     predictions = predict!(gbp, instances)
     @fact eltype(predictions) => Float64
@@ -42,20 +42,20 @@ facts("Machine Learning API") do
   context("postprocess_pred works") do
     predictions = [-Inf, 0.0, Inf]
     expected = [0.0, 1.0, 1.0]
-    actual = ML.postprocess_pred(:class, BernoulliLoss(), predictions)
+    actual = ML.postprocess_pred(:class, BinomialDeviance(), predictions)
     @fact actual => expected
 
     predictions = [-Inf, 0.0, Inf]
-    actual = ML.postprocess_pred(:class_prob, BernoulliLoss(), predictions)
+    actual = ML.postprocess_pred(:class_prob, BinomialDeviance(), predictions)
     @fact all(i -> (0 <= i <= 1), actual) => true
 
     predictions = [-Inf, 0.0, Inf]
     expected = predictions
-    actual = ML.postprocess_pred(:regression, GaussianLoss(), predictions)
+    actual = ML.postprocess_pred(:regression, LeastSquares(), predictions)
     @fact actual => expected
 
     predictions = [-Inf, 0.0, Inf]
-    @fact_throws ML.postprocess_pred(:class, GaussianLoss(), predictions)
+    @fact_throws ML.postprocess_pred(:class, LeastSquares(), predictions)
   end
 
   context("logistic works") do

@@ -18,7 +18,7 @@ type GBDT <: GradientBoost
   num_iterations::Int
   tree_options::Dict
 
-  function GBDT(loss_function=GaussianLoss(),
+  function GBDT(loss_function=LeastSquares(),
     sampling_rate=0.6, learning_rate=0.1, 
     num_iterations=100, tree_options=Dict())
 
@@ -53,8 +53,8 @@ function GB.build_base_func(
   function val_func(node)
     inst_ind = inst_node_index.n2i[node]
 
-    # If loss function is Gaussian, we don't need need to change values.
-    if typeof(gb.loss_function) <: GaussianLoss
+    # If loss function is LeastSquares, we don't need need to change values.
+    if typeof(gb.loss_function) <: LeastSquares
       val = node.majority
     else
       val = fit_best_constant(gb.loss_function,
@@ -131,13 +131,13 @@ function update_regions!{T}(n2v::Dict{Leaf, T}, leaf::Leaf, val_func::Function)
 end
 
 # Loss function fits
-function fit_best_constant(lf::LaplaceLoss,
+function fit_best_constant(lf::LeastAbsoluteDeviation,
   labels, psuedo, psuedo_pred, prev_func_pred)
 
   values = labels .- prev_func_pred
   median(values)
 end
-function fit_best_constant(lf::BernoulliLoss,
+function fit_best_constant(lf::BinomialDeviance,
   labels, psuedo, psuedo_pred, prev_func_pred)
 
   num = sum(psuedo)

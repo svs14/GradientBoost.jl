@@ -30,13 +30,13 @@ facts("GB Learner") do
     dummy_model = emp_vec
 
     @fact_throws learner_fit(
-      GaussianLoss(),
+      LeastSquares(),
       dgb,
       emp_mat,
       emp_vec
     )
     @fact_throws learner_predict(
-      GaussianLoss(),
+      LeastSquares(),
       dgb,
       dummy_model,
       emp_mat
@@ -76,8 +76,8 @@ facts("GB Learner") do
     @fact predictions => roughly(expected)
   end
 
-  context("GaussianLoss fit_best_constant works") do
-    lf = GaussianLoss()
+  context("LeastSquares fit_best_constant works") do
+    lf = LeastSquares()
     dummy_vec = [0.0,0.0,0.0,0.0]
     expected = 1.0
 
@@ -86,8 +86,8 @@ facts("GB Learner") do
     )
     @fact actual => expected
   end
-  context("LaplaceLoss fit_best_constant works") do
-    lf = LaplaceLoss()
+  context("LeastAbsoluteDeviation fit_best_constant works") do
+    lf = LeastAbsoluteDeviation()
     dummy_vec = [0.0,0.0,0.0,0.0]
     labels = [0.0,1.0,2.0,3.0]
     psuedo_pred = [3.0,2.0,1.0,0.0]
@@ -99,8 +99,8 @@ facts("GB Learner") do
     )
     @fact actual => roughly(expected)
   end
-  context("BernoulliLoss fit_best_constant throws error") do
-    lf = BernoulliLoss()
+  context("BinomialDeviance fit_best_constant throws error") do
+    lf = BinomialDeviance()
     dummy_vec = [0.0,0.0,0.0,0.0]
 
     @fact_throws GBLearner.fit_best_constant(

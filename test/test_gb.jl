@@ -58,13 +58,13 @@ facts("Gradient Boost") do
 
   context("stochastic_gradient_boost works") do
     # Sanity check
-    sgb = StubGradientBoost(GaussianLoss(), 1.0, 0.5, 1)
+    sgb = StubGradientBoost(LeastSquares(), 1.0, 0.5, 1)
     model = stochastic_gradient_boost(sgb, sgb_instances, sgb_labels)
     @fact 1 => 1
   end
 
   context("fit returns model") do
-    sgb = StubGradientBoost(GaussianLoss(), 1.0, 0.5, 1)
+    sgb = StubGradientBoost(LeastSquares(), 1.0, 0.5, 1)
     model = stochastic_gradient_boost(sgb, sgb_instances, sgb_labels)
     @fact typeof(model) <: GBModel => true
   end
@@ -74,7 +74,7 @@ facts("Gradient Boost") do
       3.0
       3.5
     ]
-    sgb = StubGradientBoost(GaussianLoss(), 1.0, 0.5, 1)
+    sgb = StubGradientBoost(LeastSquares(), 1.0, 0.5, 1)
     model = stochastic_gradient_boost(sgb, sgb_instances, sgb_labels)
     predictions = predict(model, sgb_instances)
     @fact predictions => expected
@@ -84,14 +84,14 @@ facts("Gradient Boost") do
     instances = [1:5 6:10]
     labels = [1:5]
 
-    sgb = StubGradientBoost(GaussianLoss(), 1, 1, 1)
+    sgb = StubGradientBoost(LeastSquares(), 1, 1, 1)
     indices = create_sample_indices(sgb, instances, labels)
     @fact length(indices) => 5
     @fact length(unique(indices)) => 5
     @fact minimum(indices) >= 1 => true
     @fact maximum(indices) <= 5 => true
 
-    sgb = StubGradientBoost(GaussianLoss(), 0.5, 1, 1)
+    sgb = StubGradientBoost(LeastSquares(), 0.5, 1, 1)
     indices = create_sample_indices(sgb, instances, labels)
     @fact length(indices) => 3
     @fact length(unique(indices)) => 3

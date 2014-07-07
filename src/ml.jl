@@ -10,9 +10,9 @@ export GBProblem,
        fit!,
        predict!,
        LossFunction,
-       GaussianLoss,
-       LaplaceLoss,
-       BernoulliLoss,
+       LeastSquares,
+       LeastAbsoluteDeviation,
+       BinomialDeviance,
        GBDT,
        GBL,
        learner_fit,
@@ -65,11 +65,11 @@ end
 function postprocess_pred(
   output::Symbol, lf::LossFunction, predictions::Vector{Float64})
 
-  if output == :class && typeof(lf) <: BernoulliLoss
+  if output == :class && typeof(lf) <: BinomialDeviance
     return round(logistic(predictions))
-  elseif output == :class_prob && typeof(lf) <: BernoulliLoss
+  elseif output == :class_prob && typeof(lf) <: BinomialDeviance
     return logistic(predictions)
-  elseif output == :regression && !(typeof(lf) <: BernoulliLoss)
+  elseif output == :regression && !(typeof(lf) <: BinomialDeviance)
     return predictions
   else
     error("Cannot handle $(output) and $(typeof(lf)) together.")

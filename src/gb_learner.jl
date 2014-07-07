@@ -18,7 +18,7 @@ type GBL <: GradientBoost
   num_iterations::Int
   learner
 
-  function GBL(learner, loss_function=GaussianLoss(),
+  function GBL(learner, loss_function=LeastSquares(),
     sampling_rate=0.8, learning_rate=0.1, 
     num_iterations=100)
 
@@ -70,14 +70,14 @@ function learner_predict(lf::LossFunction, learner, model, instances)
 end
 
 # Loss function fits
-function fit_best_constant(lf::GaussianLoss,
+function fit_best_constant(lf::LeastSquares,
   labels, psuedo, psuedo_pred, prev_func_pred)
 
   # No refitting required
   1.0
 end
 
-function fit_best_constant(lf::LaplaceLoss,
+function fit_best_constant(lf::LeastAbsoluteDeviation,
   labels, psuedo, psuedo_pred, prev_func_pred)
 
   weights = abs(psuedo_pred)
@@ -91,10 +91,10 @@ function fit_best_constant(lf::LaplaceLoss,
 
   weighted_median(weights, values)
 end
-function fit_best_constant(lf::BernoulliLoss,
+function fit_best_constant(lf::BinomialDeviance,
   labels, psuedo, psuedo_pred, prev_func_pred)
 
-  # TODO(svs14): Add fit_best_constant (BernoulliLoss) for base learner.
+  # TODO(svs14): Add fit_best_constant (BinomialDeviance) for base learner.
   error("$(typeof(lf)) is not implemented for GBLearner.")
 end
 

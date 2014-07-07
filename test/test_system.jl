@@ -96,7 +96,7 @@ facts("System tests") do
     # Train and test multiple times (GBDT)
     function gbp_func()
       gbdt = GBDT(
-        BernoulliLoss(),
+        BinomialDeviance(),
         0.6,
         0.1,
         100
@@ -122,7 +122,7 @@ facts("System tests") do
     gbp_mse_funcs = Function[]
     function mse_gbdt_func()
       gbdt = GBDT(
-        GaussianLoss(),
+        LeastSquares(),
         0.6,
         0.1,
         100
@@ -133,7 +133,7 @@ facts("System tests") do
     function mse_gbl_func()
       gbl = GBL(
         LinearModel,
-        GaussianLoss(),
+        LeastSquares(),
         0.8,
         0.1,
         100,
@@ -151,7 +151,7 @@ facts("System tests") do
     gbp_mad_funcs = Function[]
     function mad_gbdt_func()
       gbdt = GBDT(
-        LaplaceLoss(),
+        LeastAbsoluteDeviation(),
         0.6,
         0.1,
         100
@@ -162,7 +162,7 @@ facts("System tests") do
     function mad_gbl_func()
       gbl = GBL(
         LinearModel,
-        LaplaceLoss(),
+        LeastAbsoluteDeviation(),
         0.8,
         0.1,
         100,
