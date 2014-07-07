@@ -150,7 +150,7 @@ end
 ```
 
 Once this is done, 
-the algorithm can instantiated with the respective base learner.
+the algorithm can be instantiated with the respective base learner.
 ```julia
 gbl = GBL(
   LinearModel, # Base Learner
@@ -176,7 +176,7 @@ The bare minimum an algorithm must implement is
 `build_base_func`. Optionally, `create_sample_indices` can be extended. 
 Loss functions can be found in `GradientBoost.LossFunctions`.
 
-An relatively light algorithm 
+A relatively light algorithm 
 that implements this is `GBLearner`, found in `src/gb_learner.jl`.
 
 ## Misc
