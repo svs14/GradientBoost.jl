@@ -1,5 +1,5 @@
 # Gradient Boosted Learner
-module GBLearner
+module GBBaseLearner
 
 export GBL,
        build_base_func,
@@ -95,7 +95,7 @@ function fit_best_constant(lf::BinomialDeviance,
   labels, psuedo, psuedo_pred, prev_func_pred)
 
   # TODO(svs14): Add fit_best_constant (BinomialDeviance) for base learner.
-  error("$(typeof(lf)) is not implemented for GBLearner.")
+  error("$(typeof(lf)) is not implemented for GBBaseLearner.")
 end
 
 end # module

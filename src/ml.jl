@@ -4,7 +4,7 @@ module ML
 importall GradientBoost.LossFunctions
 importall GradientBoost.GB
 importall GradientBoost.GBDecisionTree
-importall GradientBoost.GBLearner
+importall GradientBoost.GBBaseLearner
 
 export GBProblem,
        fit!,
