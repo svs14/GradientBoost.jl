@@ -1,7 +1,7 @@
 # Gradient Boosted Learner
-module GBLearner
+module GBBaseLearner
 
-export GBL,
+export GBBL,
        build_base_func,
        learner_fit,
        learner_predict
@@ -11,14 +11,14 @@ importall GradientBoost.LossFunctions
 importall GradientBoost.Util
 
 # Gradient boosted base learner algorithm.
-type GBL <: GradientBoost
+type GBBL <: GradientBoost
   loss_function::LossFunction
   sampling_rate::FloatingPoint
   learning_rate::FloatingPoint
   num_iterations::Int
   learner
 
-  function GBL(learner, loss_function=LeastSquares(),
+  function GBBL(learner, loss_function=LeastSquares(),
     sampling_rate=0.8, learning_rate=0.1, 
     num_iterations=100)
 
@@ -27,7 +27,7 @@ type GBL <: GradientBoost
 end
 
 function GB.build_base_func(
-    gb::GBL,
+    gb::GBBL,
     instances,
     labels,
     prev_func_pred,
@@ -95,7 +95,7 @@ function fit_best_constant(lf::BinomialDeviance,
   labels, psuedo, psuedo_pred, prev_func_pred)
 
   # TODO(svs14): Add fit_best_constant (BinomialDeviance) for base learner.
-  error("$(typeof(lf)) is not implemented for GBLearner.")
+  error("$(typeof(lf)) is not implemented for GBBaseLearner.")
 end
 
 end # module
