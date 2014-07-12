@@ -8,12 +8,12 @@ importall GradientBoost.ML
 
 import GLM: fit, predict, LinearModel
 
-# Experiment on GBProblem
+# Experiment on GBLearner
 #
-# gbp_func is a function that returns an instantiated GBProblem.
+# gbl_func is a function that returns an instantiated GBLearner.
 # score_func is a function that takes predictions, actual and returns as score.
 # baseline_func is a function that takes labels.
-function experiment(gbp_func, score_func, baseline_func,
+function experiment(gbl_func, score_func, baseline_func,
   num_experiments, instances, labels)
 
   scores = Array(Float64, num_experiments)
@@ -26,11 +26,11 @@ function experiment(gbp_func, score_func, baseline_func,
     test_labels = labels[test_ind]
 
     # Train
-    gbp = gbp_func()
-    fit!(gbp, train_instances, train_labels)
+    gbl = gbl_func()
+    fit!(gbl, train_instances, train_labels)
 
     # Test
-    predictions = predict!(gbp, test_instances)
+    predictions = predict!(gbl, test_instances)
     score = score_func(predictions, test_labels)
     scores[i] = score
   end
@@ -94,17 +94,17 @@ facts("System tests") do
     labels = [species == "setosa" ? 1.0 : 0.0 for species in labels]
 
     # Train and test multiple times (GBDT)
-    function gbp_func()
+    function gbl_func()
       gbdt = GBDT(
         BinomialDeviance(),
         0.6,
         0.1,
         100
       )
-      gbp = GBProblem(gbdt, :class)
+      gbl = GBLearner(gbdt, :class)
     end
     experiment(
-      gbp_func, err_rate, baseline_err_rate, num_experiments, instances, labels
+      gbl_func, err_rate, baseline_err_rate, num_experiments, instances, labels
     )
   end
 
@@ -119,7 +119,7 @@ facts("System tests") do
     labels = convert(Vector{Float64}, labels)
 
     # Train and test multiple times (MSE)
-    gbp_mse_funcs = Function[]
+    gbl_mse_funcs = Function[]
     function mse_gbdt_func()
       gbdt = GBDT(
         LeastSquares(),
@@ -127,9 +127,9 @@ facts("System tests") do
         0.1,
         100
       )
-      gbp = GBProblem(gbdt, :regression)
+      gbl = GBLearner(gbdt, :regression)
     end
-    push!(gbp_mse_funcs, mse_gbdt_func)
+    push!(gbl_mse_funcs, mse_gbdt_func)
     function mse_gbl_func()
       gbl = GBBL(
         LinearModel,
@@ -138,17 +138,17 @@ facts("System tests") do
         0.1,
         100,
       )
-      gbp = GBProblem(gbl, :regression)
+      gbl = GBLearner(gbl, :regression)
     end
-    push!(gbp_mse_funcs, mse_gbl_func)
-    for i = 1:length(gbp_mse_funcs)
+    push!(gbl_mse_funcs, mse_gbl_func)
+    for i = 1:length(gbl_mse_funcs)
       experiment(
-        gbp_mse_funcs[i], mse, baseline_mse, num_experiments, instances, labels
+        gbl_mse_funcs[i], mse, baseline_mse, num_experiments, instances, labels
       )
     end
 
     # Train and test multiple times (MAD)
-    gbp_mad_funcs = Function[]
+    gbl_mad_funcs = Function[]
     function mad_gbdt_func()
       gbdt = GBDT(
         LeastAbsoluteDeviation(),
@@ -156,9 +156,9 @@ facts("System tests") do
         0.1,
         100
       )
-      gbp = GBProblem(gbdt, :regression)
+      gbl = GBLearner(gbdt, :regression)
     end
-    push!(gbp_mad_funcs, mad_gbdt_func)
+    push!(gbl_mad_funcs, mad_gbdt_func)
     function mad_gbl_func()
       gbl = GBBL(
         LinearModel,
@@ -167,12 +167,12 @@ facts("System tests") do
         0.1,
         100,
       )
-      gbp = GBProblem(gbl, :regression)
+      gbl = GBLearner(gbl, :regression)
     end
-    push!(gbp_mad_funcs, mad_gbl_func)
-    for i = 1:length(gbp_mad_funcs)
+    push!(gbl_mad_funcs, mad_gbl_func)
+    for i = 1:length(gbl_mad_funcs)
       experiment(
-        gbp_mad_funcs[i], mad, baseline_mad, num_experiments, instances, labels
+        gbl_mad_funcs[i], mad, baseline_mad, num_experiments, instances, labels
       )
     end
   end

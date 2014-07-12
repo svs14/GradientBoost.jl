@@ -58,18 +58,18 @@ train_ind, test_ind = GradientBoost.Util.holdout(num_instances, 0.2)
 
 ### Build Learner
 
-The gradient boosting (GB) learning problem comprises of a GB algorithm 
+The gradient boosting (GB) learner comprises of a GB algorithm 
 and what output it must produce. 
 In this case, we shall assign a gradient boosted decision tree to output classes.
 ```julia
-# Build GBProblem
+# Build GBLearner
 gbdt = GBDT(
   BinomialDeviance(), # Loss function
   0.6, # Sampling rate
   0.1, # Learning rate
   100, # Number of iterations
 )
-gbp = GBProblem(
+gbl = GBLearner(
   gbdt, # Gradient boosting algorithm
   :class # Output (:class, :class_prob, :regression)
 )
@@ -83,10 +83,10 @@ In this case, it is not an issue.
 
 ```julia
 # Train
-fit!(gbp, instances[train_ind, :], labels[train_ind])
+fit!(gbl, instances[train_ind, :], labels[train_ind])
 
 # Predict
-predictions = predict!(gbp, instances[test_ind, :])
+predictions = predict!(gbl, instances[test_ind, :])
 ```
 
 ### Evaluate
@@ -152,14 +152,14 @@ end
 Once this is done, 
 the algorithm can be instantiated with the respective base learner.
 ```julia
-gbl = GBL(
+gbl = GBBL(
   LinearModel, # Base Learner
   LeastSquares(), # Loss functoin
   0.8, # Sampling rate
   0.1, # Learning rate
   100 # Number of iterations
 )
-gbp = GBProblem(gbl, :regression)
+gbl = GBLearner(gbl, :regression)
 ```
 
 ## Gradient Boosting Framework
@@ -177,7 +177,7 @@ The bare minimum an algorithm must implement is
 Loss functions can be found in `GradientBoost.LossFunctions`.
 
 A relatively light algorithm 
-that implements this is `GBLearner`, found in `src/gb_learner.jl`.
+that implements this is `GBBL`, found in `src/gb_bl.jl`.
 
 ## Misc
 
