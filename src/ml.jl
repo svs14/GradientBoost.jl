@@ -14,7 +14,7 @@ export GBProblem,
        LeastAbsoluteDeviation,
        BinomialDeviance,
        GBDT,
-       GBL,
+       GBBL,
        learner_fit,
        learner_predict
 

@@ -45,7 +45,7 @@ facts("GB Learner") do
 
   context("build_base_func works") do
     sl = StubLearner()
-    gb = GBL(sl)
+    gb = GBBL(sl)
     instances = [
       1 1;
       2 4;

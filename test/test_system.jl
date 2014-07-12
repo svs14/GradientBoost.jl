@@ -131,7 +131,7 @@ facts("System tests") do
     end
     push!(gbp_mse_funcs, mse_gbdt_func)
     function mse_gbl_func()
-      gbl = GBL(
+      gbl = GBBL(
         LinearModel,
         LeastSquares(),
         0.8,
@@ -160,7 +160,7 @@ facts("System tests") do
     end
     push!(gbp_mad_funcs, mad_gbdt_func)
     function mad_gbl_func()
-      gbl = GBL(
+      gbl = GBBL(
         LinearModel,
         LeastAbsoluteDeviation(),
         0.8,
