@@ -63,14 +63,14 @@ and what output it must produce.
 In this case, we shall assign a gradient boosted decision tree to output classes.
 ```julia
 # Build GBLearner
-gbdt = GBDT(
-  BinomialDeviance(), # Loss function
-  0.6, # Sampling rate
-  0.1, # Learning rate
-  100, # Number of iterations
+gbdt = GBDT(;
+  loss_function=BinomialDeviance(),
+  sampling_rate=0.6,
+  learning_rate=0.1,
+  num_iterations=100
 )
 gbl = GBLearner(
-  gbdt, # Gradient boosting algorithm
+  gbdt,  # Gradient boosting algorithm
   :class # Output (:class, :class_prob, :regression)
 )
 ```
@@ -113,12 +113,12 @@ Current loss functions covered are:
 `LeastSquares`, `LeastAbsoluteDeviation` and `BinomialDeviance`.
 
 ```julia
-gbdt = GBDT(
-  BinomialDeviance(), # Loss function
-  0.6, # Sampling rate
-  0.1, # Learning rate
-  100, # Number of iterations
-  {    # Tree options (DecisionTree.jl regressor)
+gbdt = GBDT(;
+  loss_function=BinomialDeviance(), # Loss function
+  sampling_rate=0.6,                # Sampling rate
+  learning_rate=0.1,                # Learning rate
+  num_iterations=100,               # Number of iterations
+  tree_options={                    # Tree options (DecisionTree.jl regressor)
     :maxlabels => 5,
     :nsubfeatures => 0
   }
@@ -153,11 +153,11 @@ Once this is done,
 the algorithm can be instantiated with the respective base learner.
 ```julia
 gbl = GBBL(
-  LinearModel, # Base Learner
-  LeastSquares(), # Loss functoin
-  0.8, # Sampling rate
-  0.1, # Learning rate
-  100 # Number of iterations
+  LinearModel;                  # Base Learner
+  loss_function=LeastSquares(), # Loss function
+  sampling_rate=0.8,            # Sampling rate
+  learning_rate=0.1,            # Learning rate
+  num_iterations=100            # Number of iterations
 )
 gbl = GBLearner(gbl, :regression)
 ```
