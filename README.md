@@ -83,10 +83,10 @@ In this case, it is not an issue.
 
 ```julia
 # Train
-fit!(gbl, instances[train_ind, :], labels[train_ind])
+ML.fit!(gbl, instances[train_ind, :], labels[train_ind])
 
 # Predict
-predictions = predict!(gbl, instances[test_ind, :])
+predictions = ML.predict!(gbl, instances[test_ind, :])
 ```
 
 ### Evaluate
