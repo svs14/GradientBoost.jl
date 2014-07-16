@@ -1,1 +1,4 @@
 *.cov
+Gemfile
+Gemfile.lock
+Guardfile

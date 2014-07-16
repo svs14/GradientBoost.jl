@@ -33,7 +33,7 @@ facts("Machine Learning API") do
   end
 
   context("predict! on Float64 arrays works") do
-    gbl = GBLearner(GBDT(BinomialDeviance()), :class)
+    gbl = GBLearner(GBDT(;loss_function=BinomialDeviance()), :class)
     fit!(gbl, instances, labels)
     predictions = predict!(gbl, instances)
     @fact eltype(predictions) => Float64

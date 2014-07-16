@@ -25,11 +25,11 @@ end
 
 facts("GB Decision Tree") do
   context("build_base_func works") do
-    gb = GBDT(
-      LeastSquares(),
-      0.5,
-      0.01,
-      100
+    gb = GBDT(;
+      loss_function=LeastSquares(),
+      sampling_rate=0.5,
+      learning_rate=0.01,
+      num_iterations=100
     )
     prev_func_pred = 
       fill(minimizing_scalar(gb.loss_function, labels), size(instances, 1))

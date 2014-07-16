@@ -18,7 +18,7 @@ type GBBL <: GradientBoost
   num_iterations::Int
   learner
 
-  function GBBL(learner, loss_function=LeastSquares(),
+  function GBBL(learner; loss_function=LeastSquares(),
     sampling_rate=0.8, learning_rate=0.1, 
     num_iterations=100)
 

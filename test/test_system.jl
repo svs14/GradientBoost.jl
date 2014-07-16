@@ -95,11 +95,11 @@ facts("System tests") do
 
     # Train and test multiple times (GBDT)
     function gbl_func()
-      gbdt = GBDT(
-        BinomialDeviance(),
-        0.6,
-        0.1,
-        100
+      gbdt = GBDT(;
+        loss_function=BinomialDeviance(),
+        sampling_rate=0.6,
+        learning_rate=0.1,
+        num_iterations=100
       )
       gbl = GBLearner(gbdt, :class)
     end
@@ -121,22 +121,22 @@ facts("System tests") do
     # Train and test multiple times (MSE)
     gbl_mse_funcs = Function[]
     function mse_gbdt_func()
-      gbdt = GBDT(
-        LeastSquares(),
-        0.6,
-        0.1,
-        100
+      gbdt = GBDT(;
+        loss_function=LeastSquares(),
+        sampling_rate=0.6,
+        learning_rate=0.1,
+        num_iterations=100
       )
       gbl = GBLearner(gbdt, :regression)
     end
     push!(gbl_mse_funcs, mse_gbdt_func)
     function mse_gbl_func()
       gbl = GBBL(
-        LinearModel,
-        LeastSquares(),
-        0.8,
-        0.1,
-        100,
+        LinearModel;
+        loss_function=LeastSquares(),
+        sampling_rate=0.8,
+        learning_rate=0.1,
+        num_iterations=100,
       )
       gbl = GBLearner(gbl, :regression)
     end
@@ -150,22 +150,22 @@ facts("System tests") do
     # Train and test multiple times (MAD)
     gbl_mad_funcs = Function[]
     function mad_gbdt_func()
-      gbdt = GBDT(
-        LeastAbsoluteDeviation(),
-        0.6,
-        0.1,
-        100
+      gbdt = GBDT(;
+        loss_function=LeastAbsoluteDeviation(),
+        sampling_rate=0.6,
+        learning_rate=0.1,
+        num_iterations=100
       )
       gbl = GBLearner(gbdt, :regression)
     end
     push!(gbl_mad_funcs, mad_gbdt_func)
     function mad_gbl_func()
       gbl = GBBL(
-        LinearModel,
-        LeastAbsoluteDeviation(),
-        0.8,
-        0.1,
-        100,
+        LinearModel;
+        loss_function=LeastAbsoluteDeviation(),
+        sampling_rate=0.8,
+        learning_rate=0.1,
+        num_iterations=100,
       )
       gbl = GBLearner(gbl, :regression)
     end
