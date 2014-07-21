@@ -11,14 +11,14 @@ export GBDT,
        build_base_func
 
 # Gradient boosted decision tree algorithm.
-type GBDT <: GradientBoost
+type GBDT <: GBAlgorithm
   loss_function::LossFunction
   sampling_rate::FloatingPoint
   learning_rate::FloatingPoint
   num_iterations::Int
   tree_options::Dict
 
-  function GBDT(loss_function=LeastSquares(),
+  function GBDT(;loss_function=LeastSquares(),
     sampling_rate=0.6, learning_rate=0.1, 
     num_iterations=100, tree_options=Dict())
 

@@ -58,19 +58,19 @@ train_ind, test_ind = GradientBoost.Util.holdout(num_instances, 0.2)
 
 ### Build Learner
 
-The gradient boosting (GB) learning problem comprises of a GB algorithm 
+The gradient boosting (GB) learner comprises of a GB algorithm 
 and what output it must produce. 
 In this case, we shall assign a gradient boosted decision tree to output classes.
 ```julia
-# Build GBProblem
-gbdt = GBDT(
-  BinomialDeviance(), # Loss function
-  0.6, # Sampling rate
-  0.1, # Learning rate
-  100, # Number of iterations
+# Build GBLearner
+gbdt = GBDT(;
+  loss_function = BinomialDeviance(),
+  sampling_rate = 0.6,
+  learning_rate = 0.1,
+  num_iterations = 100
 )
-gbp = GBProblem(
-  gbdt, # Gradient boosting algorithm
+gbl = GBLearner(
+  gbdt,  # Gradient boosting algorithm
   :class # Output (:class, :class_prob, :regression)
 )
 ```
@@ -83,10 +83,10 @@ In this case, it is not an issue.
 
 ```julia
 # Train
-fit!(gbp, instances[train_ind, :], labels[train_ind])
+ML.fit!(gbl, instances[train_ind, :], labels[train_ind])
 
 # Predict
-predictions = predict!(gbp, instances[test_ind, :])
+predictions = ML.predict!(gbl, instances[test_ind, :])
 ```
 
 ### Evaluate
@@ -113,12 +113,12 @@ Current loss functions covered are:
 `LeastSquares`, `LeastAbsoluteDeviation` and `BinomialDeviance`.
 
 ```julia
-gbdt = GBDT(
-  BinomialDeviance(), # Loss function
-  0.6, # Sampling rate
-  0.1, # Learning rate
-  100, # Number of iterations
-  {    # Tree options (DecisionTree.jl regressor)
+gbdt = GBDT(;
+  loss_function = BinomialDeviance(), # Loss function
+  sampling_rate = 0.6,                # Sampling rate
+  learning_rate = 0.1,                # Learning rate
+  num_iterations = 100,               # Number of iterations
+  tree_options = {                    # Tree options (DecisionTree.jl regressor)
     :maxlabels => 5,
     :nsubfeatures => 0
   }
@@ -152,32 +152,53 @@ end
 Once this is done, 
 the algorithm can be instantiated with the respective base learner.
 ```julia
-gbl = GBL(
-  LinearModel, # Base Learner
-  LeastSquares(), # Loss functoin
-  0.8, # Sampling rate
-  0.1, # Learning rate
-  100 # Number of iterations
+gbl = GBBL(
+  LinearModel;                    # Base Learner
+  loss_function = LeastSquares(), # Loss function
+  sampling_rate = 0.8,            # Sampling rate
+  learning_rate = 0.1,            # Learning rate
+  num_iterations = 100            # Number of iterations
 )
-gbp = GBProblem(gbl, :regression)
+gbl = GBLearner(gbl, :regression)
 ```
 
 ## Gradient Boosting Framework
 
 All previously developed algorithms follow the framework 
 provided by `GradientBoost.GB`. 
+
 As this package is in its preliminary stage, 
 major changes may occur in the near future and as such 
 we provide minimal README documentation.
 
-The algorithm must be of type `GradientBoost`, with fields 
-`loss_function`,`learning_rate`, `sampling_rate` and `num_iterations` accessible. 
-The bare minimum an algorithm must implement is 
-`build_base_func`. Optionally, `create_sample_indices` can be extended. 
-Loss functions can be found in `GradientBoost.LossFunctions`.
+All of what is required to be implemented is exampled below:
+```julia
+import GradientBoost.GB
+import GradientBoost.LossFunctions: LossFunction
+
+# Must subtype from GBAlgorithm defined in GB module.
+type ExampleGB <: GB.GBAlgorithm
+  loss_function::LossFunction
+  sampling_rate::FloatingPoint
+  learning_rate::FloatingPoint
+  num_iterations::Int
+end
+
+# Model training and co-efficient optimization should be done here.
+function GB.build_base_func(
+  gb::ExampleGB, instances, labels, prev_func_pred, psuedo)
+
+  model_const = 0.5
+  model_pred = (instances) -> Float64[
+    sum(instances[i,:]) for i = 1:size(instances, 1)
+  ]
+
+  return (instances) -> model_const .* model_pred(instances)
+end
+```
 
 A relatively light algorithm 
-that implements this is `GBLearner`, found in `src/gb_learner.jl`.
+that implements `GBAlgorithm` is `GBBL`, found in `src/gb_bl.jl`.
 
 ## Misc
 

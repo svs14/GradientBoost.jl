@@ -17,25 +17,25 @@ labels = [
 
 facts("Machine Learning API") do
   context("not implemented functions throw an error") do
-    gbp = GBProblem(GBDT(), :regression)
+    gbl = GBLearner(GBDT(), :regression)
     instances = 1
     labels = 1
 
-    @fact_throws fit!(gbp, instances, labels)
-    @fact_throws predict!(gbp, instances)
+    @fact_throws fit!(gbl, instances, labels)
+    @fact_throws predict!(gbl, instances)
   end
 
   context("fit! on Float64 arrays works") do
-    gbp = GBProblem(GBDT(), :regression)
-    @fact gbp.model => nothing
-    fit!(gbp, instances, labels)
-    @fact gbp.model => not(nothing)
+    gbl = GBLearner(GBDT(), :regression)
+    @fact gbl.model => nothing
+    fit!(gbl, instances, labels)
+    @fact gbl.model => not(nothing)
   end
 
   context("predict! on Float64 arrays works") do
-    gbp = GBProblem(GBDT(BinomialDeviance()), :class)
-    fit!(gbp, instances, labels)
-    predictions = predict!(gbp, instances)
+    gbl = GBLearner(GBDT(;loss_function=BinomialDeviance()), :class)
+    fit!(gbl, instances, labels)
+    predictions = predict!(gbl, instances)
     @fact eltype(predictions) => Float64
   end
 

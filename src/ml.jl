@@ -4,9 +4,9 @@ module ML
 importall GradientBoost.LossFunctions
 importall GradientBoost.GB
 importall GradientBoost.GBDecisionTree
-importall GradientBoost.GBLearner
+importall GradientBoost.GBBaseLearner
 
-export GBProblem,
+export GBLearner,
        fit!,
        predict!,
        LossFunction,
@@ -14,47 +14,46 @@ export GBProblem,
        LeastAbsoluteDeviation,
        BinomialDeviance,
        GBDT,
-       GBL,
+       GBBL,
        learner_fit,
        learner_predict
 
 
-# Gradient boosting problem.
-# NOTE(svs14): Might want to find a better name for this.
-type GBProblem
-  algorithm::GradientBoost
+# Gradient boosting learner as defined by ML API.
+type GBLearner
+  algorithm::GBAlgorithm
   output::Symbol
   model
 
-  function GBProblem(algorithm, output=:regression)
+  function GBLearner(algorithm, output=:regression)
     new(algorithm, output, nothing)
   end
 end
 
-function fit!(gbp::GBProblem, instances, labels)
+function fit!(gbl::GBLearner, instances, labels)
   error("Instance type: $(typeof(instances)) 
     and label type: $(typeof(labels)) together is currently not supported.")
 end
-function predict!(gbp::GBProblem, instances)
+function predict!(gbl::GBLearner, instances)
   error("Instance type: $(typeof(instances)) is currently not supported.")
 end
 
-function fit!(gbp::GBProblem, 
+function fit!(gbl::GBLearner, 
   instances::Matrix{Float64}, labels::Vector{Float64})
 
   # No special processing required.
-  gbp.model = fit(gbp.algorithm, instances, labels)
+  gbl.model = fit(gbl.algorithm, instances, labels)
 end
 
-function predict!(gbp::GBProblem, 
+function predict!(gbl::GBLearner, 
   instances::Matrix{Float64})
 
   # Predict with GB algorithm
-  predictions = predict(gbp.model, instances)
+  predictions = predict(gbl.model, instances)
   
   # Postprocess according to output and loss function
   predictions = postprocess_pred(
-    gbp.output, gbp.algorithm.loss_function, predictions
+    gbl.output, gbl.algorithm.loss_function, predictions
   )
 
   predictions

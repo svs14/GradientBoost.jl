@@ -4,7 +4,7 @@ module GradientBoost
 include("util.jl")
 include("loss.jl")
 include("gb.jl")
-include("gb_learner.jl")
+include("gb_bl.jl")
 include("gb_dt.jl")
 include("ml.jl")
 

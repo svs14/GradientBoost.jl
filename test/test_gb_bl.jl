@@ -1,19 +1,19 @@
-module TestGBLearner
+module TestGBBaseLearner
 
 using FactCheck
-importall GradientBoost.GBLearner
+importall GradientBoost.GBBaseLearner
 importall GradientBoost.LossFunctions
 
 type DummyLearner; end
 type StubLearner; end
 
-function GBLearner.learner_fit(lf::LossFunction, learner::StubLearner, 
+function GBBaseLearner.learner_fit(lf::LossFunction, learner::StubLearner, 
   instances, labels)
 
   return (instance) -> mean(instance)
 end
 
-function GBLearner.learner_predict(lf::LossFunction, learner::StubLearner, 
+function GBBaseLearner.learner_predict(lf::LossFunction, learner::StubLearner, 
   model, instances)
 
   pred_func = model
@@ -45,7 +45,7 @@ facts("GB Learner") do
 
   context("build_base_func works") do
     sl = StubLearner()
-    gb = GBL(sl)
+    gb = GBBL(sl)
     instances = [
       1 1;
       2 4;
@@ -81,7 +81,7 @@ facts("GB Learner") do
     dummy_vec = [0.0,0.0,0.0,0.0]
     expected = 1.0
 
-    actual = GBLearner.fit_best_constant(
+    actual = GBBaseLearner.fit_best_constant(
       lf, dummy_vec, dummy_vec, dummy_vec, dummy_vec
     )
     @fact actual => expected
@@ -94,7 +94,7 @@ facts("GB Learner") do
     prev_func_pred = [1.0,0.0,1.0,0.0]
     expected = -0.333333
 
-    actual = GBLearner.fit_best_constant(
+    actual = GBBaseLearner.fit_best_constant(
       lf, labels, dummy_vec, psuedo_pred, prev_func_pred
     )
     @fact actual => roughly(expected)
@@ -103,7 +103,7 @@ facts("GB Learner") do
     lf = BinomialDeviance()
     dummy_vec = [0.0,0.0,0.0,0.0]
 
-    @fact_throws GBLearner.fit_best_constant(
+    @fact_throws GBBaseLearner.fit_best_constant(
       lf, dummy_vec, dummy_vec, dummy_vec, dummy_vec
     )
   end
