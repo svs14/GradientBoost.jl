@@ -21,7 +21,7 @@ export GBLearner,
 
 # Gradient boosting learner as defined by ML API.
 type GBLearner
-  algorithm::GradientBoost
+  algorithm::GBAlgorithm
   output::Symbol
   model
 

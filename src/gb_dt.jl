@@ -11,7 +11,7 @@ export GBDT,
        build_base_func
 
 # Gradient boosted decision tree algorithm.
-type GBDT <: GradientBoost
+type GBDT <: GBAlgorithm
   loss_function::LossFunction
   sampling_rate::FloatingPoint
   learning_rate::FloatingPoint

@@ -4,7 +4,7 @@ module GB
 importall GradientBoost.Util
 importall GradientBoost.LossFunctions
 
-export GradientBoost,
+export GBAlgorithm,
        GBModel,
        stochastic_gradient_boost,
        fit,
@@ -14,7 +14,7 @@ export GradientBoost,
 
 
 # Gradient boost algorithm.
-abstract GradientBoost
+abstract GBAlgorithm
 
 # Gradient boost model.
 type GBModel
@@ -28,7 +28,7 @@ end
 # @param instances Instances.
 # @param labels Labels.
 # @return Gradient boost model.
-function stochastic_gradient_boost(gb::GradientBoost, instances, labels)
+function stochastic_gradient_boost(gb::GBAlgorithm, instances, labels)
   # Initialize base functions collection
   num_iterations = gb.num_iterations
   base_funcs = Array(Function, num_iterations+1)
@@ -73,7 +73,7 @@ function stochastic_gradient_boost(gb::GradientBoost, instances, labels)
   return GBModel(gb.learning_rate, base_funcs)
 end
 
-function fit(gb::GradientBoost, instances, labels)
+function fit(gb::GBAlgorithm, instances, labels)
   stochastic_gradient_boost(gb, instances, labels)
 end
 function predict(gb_model::GBModel, instances)
@@ -93,7 +93,7 @@ end
 # @param psuedo Psuedo-labels (psuedo-response).
 # @return Function of form (instances) -> predictions.
 function build_base_func(
-  gb::GradientBoost,
+  gb::GBAlgorithm,
   instances,
   labels,
   prev_func_pred,
@@ -109,7 +109,7 @@ end
 # @param instances Instances.
 # @param labels Labels.
 # @return Sample indices.
-function create_sample_indices(gb::GradientBoost, instances, labels)
+function create_sample_indices(gb::GBAlgorithm, instances, labels)
   n = size(instances, 1)
   prop = gb.sampling_rate
 

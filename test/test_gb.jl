@@ -4,9 +4,9 @@ using FactCheck
 importall GradientBoost.GB
 importall GradientBoost.LossFunctions
 
-type DummyGradientBoost <: GradientBoost; end
+type DummyGradientBoost <: GBAlgorithm; end
 
-type StubGradientBoost <: GradientBoost 
+type StubGradientBoost <: GBAlgorithm
   loss_function::LossFunction
   sampling_rate::FloatingPoint
   learning_rate::FloatingPoint

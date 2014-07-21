@@ -11,7 +11,7 @@ importall GradientBoost.LossFunctions
 importall GradientBoost.Util
 
 # Gradient boosted base learner algorithm.
-type GBBL <: GradientBoost
+type GBBL <: GBAlgorithm
   loss_function::LossFunction
   sampling_rate::FloatingPoint
   learning_rate::FloatingPoint
