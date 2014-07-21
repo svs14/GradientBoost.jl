@@ -64,10 +64,10 @@ In this case, we shall assign a gradient boosted decision tree to output classes
 ```julia
 # Build GBLearner
 gbdt = GBDT(;
-  loss_function=BinomialDeviance(),
-  sampling_rate=0.6,
-  learning_rate=0.1,
-  num_iterations=100
+  loss_function = BinomialDeviance(),
+  sampling_rate = 0.6,
+  learning_rate = 0.1,
+  num_iterations = 100
 )
 gbl = GBLearner(
   gbdt,  # Gradient boosting algorithm
@@ -114,11 +114,11 @@ Current loss functions covered are:
 
 ```julia
 gbdt = GBDT(;
-  loss_function=BinomialDeviance(), # Loss function
-  sampling_rate=0.6,                # Sampling rate
-  learning_rate=0.1,                # Learning rate
-  num_iterations=100,               # Number of iterations
-  tree_options={                    # Tree options (DecisionTree.jl regressor)
+  loss_function = BinomialDeviance(), # Loss function
+  sampling_rate = 0.6,                # Sampling rate
+  learning_rate = 0.1,                # Learning rate
+  num_iterations = 100,               # Number of iterations
+  tree_options = {                    # Tree options (DecisionTree.jl regressor)
     :maxlabels => 5,
     :nsubfeatures => 0
   }
@@ -153,11 +153,11 @@ Once this is done,
 the algorithm can be instantiated with the respective base learner.
 ```julia
 gbl = GBBL(
-  LinearModel;                  # Base Learner
-  loss_function=LeastSquares(), # Loss function
-  sampling_rate=0.8,            # Sampling rate
-  learning_rate=0.1,            # Learning rate
-  num_iterations=100            # Number of iterations
+  LinearModel;                    # Base Learner
+  loss_function = LeastSquares(), # Loss function
+  sampling_rate = 0.8,            # Sampling rate
+  learning_rate = 0.1,            # Learning rate
+  num_iterations = 100            # Number of iterations
 )
 gbl = GBLearner(gbl, :regression)
 ```
@@ -173,11 +173,11 @@ we provide minimal README documentation.
 
 All of what is required to be implemented is exampled below:
 ```julia
-import GradientBoost.GB: GBAlgorithm
+import GradientBoost.GB
 import GradientBoost.LossFunctions: LossFunction
 
 # Must subtype from GBAlgorithm defined in GB module.
-type ExampleGB <: GBAlgorithm
+type ExampleGB <: GB.GBAlgorithm
   loss_function::LossFunction
   sampling_rate::FloatingPoint
   learning_rate::FloatingPoint
