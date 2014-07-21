@@ -173,11 +173,11 @@ we provide minimal README documentation.
 
 All of what is required to be implemented is exampled below:
 ```julia
-import GradientBoost.GB
+import GradientBoost.GB: GBAlgorithm
 import GradientBoost.LossFunctions: LossFunction
 
-# Must subtype from GradientBoost defined in GB module.
-type ExampleGB <: GB.GradientBoost
+# Must subtype from GBAlgorithm defined in GB module.
+type ExampleGB <: GBAlgorithm
   loss_function::LossFunction
   sampling_rate::FloatingPoint
   learning_rate::FloatingPoint
@@ -198,7 +198,7 @@ end
 ```
 
 A relatively light algorithm 
-that implements `GradientBoost` is `GBBL`, found in `src/gb_bl.jl`.
+that implements `GBAlgorithm` is `GBBL`, found in `src/gb_bl.jl`.
 
 ## Misc
 
