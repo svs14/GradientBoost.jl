@@ -166,18 +166,39 @@ gbl = GBLearner(gbl, :regression)
 
 All previously developed algorithms follow the framework 
 provided by `GradientBoost.GB`. 
+
 As this package is in its preliminary stage, 
 major changes may occur in the near future and as such 
 we provide minimal README documentation.
 
-The algorithm must be of type `GradientBoost`, with fields 
-`loss_function`,`learning_rate`, `sampling_rate` and `num_iterations` accessible. 
-The bare minimum an algorithm must implement is 
-`build_base_func`. Optionally, `create_sample_indices` can be extended. 
-Loss functions can be found in `GradientBoost.LossFunctions`.
+All of what is required to be implemented is exampled below:
+```julia
+import GradientBoost.GB
+import GradientBoost.LossFunctions: LossFunction
+
+# Must subtype from GradientBoost defined in GB module.
+type ExampleGB <: GB.GradientBoost
+  loss_function::LossFunction
+  sampling_rate::FloatingPoint
+  learning_rate::FloatingPoint
+  num_iterations::Int
+end
+
+# Model training and co-efficient optimization should be done here.
+function GB.build_base_func(
+  gb::ExampleGB, instances, labels, prev_func_pred, psuedo)
+
+  model_const = 0.5
+  model_pred = (instances) -> Float64[
+    sum(instances[i,:]) for i = 1:size(instances, 1)
+  ]
+
+  return (instances) -> model_const .* model_pred(instances)
+end
+```
 
 A relatively light algorithm 
-that implements this is `GBBL`, found in `src/gb_bl.jl`.
+that implements `GradientBoost` is `GBBL`, found in `src/gb_bl.jl`.
 
 ## Misc
 
