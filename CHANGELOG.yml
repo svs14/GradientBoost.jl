@@ -1,6 +1,8 @@
 %YAML 1.2
 ---
 changes:
+  v0.1.0 (weiya):
+    - compatible with julia 1.0
   v0.0.1:
     - Patch example code in README.
     - Rename GradientBoost to GBAlgorithm.

@@ -1,19 +1,24 @@
 module TestGB
 
-using FactCheck
-importall GradientBoost.GB
-importall GradientBoost.LossFunctions
+using Test
 
-type DummyGradientBoost <: GBAlgorithm; end
+using GradientBoost.GB
+using GradientBoost.LossFunctions
 
-type StubGradientBoost <: GBAlgorithm
+struct DummyGradientBoost <: GBAlgorithm end
+
+struct StubGradientBoost <: GBAlgorithm
   loss_function::LossFunction
-  sampling_rate::FloatingPoint
-  learning_rate::FloatingPoint
+  sampling_rate::Float64
+  learning_rate::Float64
   num_iterations::Int
 end
 
-function build_base_func(
+# NOTE(weiya): need to import the function first, otherwise, the first test would report MethodError, and the second
+# test would throw the original error, `err_must_be_overriden`
+# import GradientBoost.GB: build_base_func
+# continue NOTE(weiya): prefix `GB.` has the same effect, but do not use `GradientBoost.GB`
+function GB.build_base_func(
   gb::StubGradientBoost,
   instances,
   labels,
@@ -22,7 +27,7 @@ function build_base_func(
 
   function pred(instances)
     num_instances = size(instances, 1)
-    predictions = Array(Float64, num_instances)
+    predictions = Array{Float64}(undef, num_instances)
     for i = 1:num_instances
       predictions[i] = sum(instances[i,:])
     end
@@ -42,12 +47,12 @@ sgb_labels = [
   3.0
 ]
 
-facts("Gradient Boost") do
-  context("not implemented functions throw an error") do
+@testset "Gradient Boost" begin
+  @testset "not implemented functions throw an error" begin
     dgb = DummyGradientBoost()
-    emp_mat = Array(Any, 1, 1)
-    emp_vec = Array[]
-    @fact_throws build_base_func(
+    emp_mat = []
+    emp_vec = []
+    @test_throws ErrorException build_base_func(
       dgb,
       emp_mat,
       emp_vec,
@@ -55,21 +60,19 @@ facts("Gradient Boost") do
       emp_vec
     )
   end
-
-  context("stochastic_gradient_boost works") do
-    # Sanity check
+  @testset "stochastic_gradient_boost works" begin
     sgb = StubGradientBoost(LeastSquares(), 1.0, 0.5, 1)
     model = stochastic_gradient_boost(sgb, sgb_instances, sgb_labels)
-    @fact 1 => 1
+    @test true
   end
 
-  context("fit returns model") do
+  @testset "fit returns model" begin
     sgb = StubGradientBoost(LeastSquares(), 1.0, 0.5, 1)
     model = stochastic_gradient_boost(sgb, sgb_instances, sgb_labels)
-    @fact typeof(model) <: GBModel => true
+    @test (typeof(model) <: GBModel) == true
   end
 
-  context("predict works") do
+  @testset "predict works" begin
     expected = [
       3.0
       3.5
@@ -77,26 +80,27 @@ facts("Gradient Boost") do
     sgb = StubGradientBoost(LeastSquares(), 1.0, 0.5, 1)
     model = stochastic_gradient_boost(sgb, sgb_instances, sgb_labels)
     predictions = predict(model, sgb_instances)
-    @fact predictions => expected
+    @test predictions == expected
   end
 
-  context("create_sample_indices works") do
+  @testset "create_sample_indices works" begin
     instances = [1:5 6:10]
     labels = [1:5]
 
-    sgb = StubGradientBoost(LeastSquares(), 1, 1, 1)
+    sgb = StubGradientBoost(LeastSquares(), 1., 1., 1)
     indices = create_sample_indices(sgb, instances, labels)
-    @fact length(indices) => 5
-    @fact length(unique(indices)) => 5
-    @fact minimum(indices) >= 1 => true
-    @fact maximum(indices) <= 5 => true
 
-    sgb = StubGradientBoost(LeastSquares(), 0.5, 1, 1)
+    @test length(indices) == 5
+    @test length(unique(indices)) == 5
+    @test (minimum(indices) >= 1) == true
+    @test (maximum(indices) <= 5) == true
+
+    sgb = StubGradientBoost(LeastSquares(), 0.5, 1., 1)
     indices = create_sample_indices(sgb, instances, labels)
-    @fact length(indices) => 3
-    @fact length(unique(indices)) => 3
-    @fact minimum(indices) >= 1 => true
-    @fact maximum(indices) <= 5 => true
+    @test length(indices) == 3
+    @test length(unique(indices)) == 3
+    @test (minimum(indices) >= 1) == true
+    @test (maximum(indices) <= 5) == true
   end
 end
 

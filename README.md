@@ -1,5 +1,8 @@
 # GradientBoost
 
+Forked: [![Build Status](https://travis-ci.org/szcf-weiya/GradientBoost.jl.svg?branch=master)](https://travis-ci.org/szcf-weiya/GradientBoost.jl)
+[![Coverage Status](https://coveralls.io/repos/github/szcf-weiya/GradientBoost.jl/badge.svg)](https://coveralls.io/github/szcf-weiya/GradientBoost.jl)
+
 [![Build Status](https://travis-ci.org/svs14/GradientBoost.jl.svg?branch=master)](https://travis-ci.org/svs14/GradientBoost.jl)
 [![Coverage Status](https://coveralls.io/repos/svs14/GradientBoost.jl/badge.png?branch=master)](https://coveralls.io/r/svs14/GradientBoost.jl?branch=master)
 
@@ -18,29 +21,29 @@ References:
 
 - <cite> Friedman, Jerome H. "Greedy function approximation: a gradient boosting
 machine." Annals of Statistics (2001): 1189-1232. </cite>
-- <cite> Friedman, Jerome H. "Stochastic gradient boosting." 
+- <cite> Friedman, Jerome H. "Stochastic gradient boosting."
 Computational Statistics & Data Analysis 38.4 (2002): 367-378. </cite>
 - <cite> Hastie, Trevor, et al. The elements of statistical learning.
 Vol. 2. No. 1. New York: Springer, 2009. </cite>
 - <cite> Ridgeway, Greg. "Generalized Boosted Models: A guide to the gbm package."
 Update 1.1 (2007). </cite>
-- <cite> Pedregosa, Fabian, et al. "Scikit-learn: Machine learning in Python." 
+- <cite> Pedregosa, Fabian, et al. "Scikit-learn: Machine learning in Python."
 The Journal of Machine Learning Research 12 (2011): 2825-2830. </cite>
-- <cite> Natekin, Alexey, and Alois Knoll. 
-"Gradient boosting machines, a tutorial." 
+- <cite> Natekin, Alexey, and Alois Knoll.
+"Gradient boosting machines, a tutorial."
 Frontiers in neurorobotics 7 (2013). </cite>
 
 ## Machine Learning API
 
-Module `GradientBoost.ML` is provided for users who are only interested in 
-using existing gradient boosting algorithms for prediction. 
-To get a feel for the API, 
-we will run a demonstration 
+Module `GradientBoost.ML` is provided for users who are only interested in
+using existing gradient boosting algorithms for prediction.
+To get a feel for the API,
+we will run a demonstration
 of gradient boosted decision trees on the iris dataset.
 
 ### Obtain Data
 
-At the moment only two-class classification is handled, 
+At the moment only two-class classification is handled,
 so our learner will attempt to separate "setosa" from the other species.
 ```julia
 using GradientBoost.ML
@@ -58,8 +61,8 @@ train_ind, test_ind = GradientBoost.Util.holdout(num_instances, 0.2)
 
 ### Build Learner
 
-The gradient boosting (GB) learner comprises of a GB algorithm 
-and what output it must produce. 
+The gradient boosting (GB) learner comprises of a GB algorithm
+and what output it must produce.
 In this case, we shall assign a gradient boosted decision tree to output classes.
 ```julia
 # Build GBLearner
@@ -77,8 +80,8 @@ gbl = GBLearner(
 
 ### Train and Predict
 
-Currently `Matrix{Float64}` instances and `Vector{Float64}` labels are 
-the only handled types for training and prediction. 
+Currently `Matrix{Float64}` instances and `Vector{Float64}` labels are
+the only handled types for training and prediction.
 In this case, it is not an issue.
 
 ```julia
@@ -106,10 +109,10 @@ Documented below are the currently implemented gradient boosting algorithms.
 
 ### GB Decision Tree
 
-Gradient Boosted Decision Tree algorithm backed by 
-[DecisionTree.jl](https://github.com/bensadeghi/DecisionTree.jl#regression-example) 
-regression trees. 
-Current loss functions covered are: 
+Gradient Boosted Decision Tree algorithm backed by
+[DecisionTree.jl](https://github.com/bensadeghi/DecisionTree.jl#regression-example)
+regression trees.
+Current loss functions covered are:
 `LeastSquares`, `LeastAbsoluteDeviation` and `BinomialDeviance`.
 
 ```julia
@@ -127,29 +130,29 @@ gbdt = GBDT(;
 
 ### GB Base Learner
 
-Gradient boosting with a given base learner. 
-Current loss functions covered are: `LeastSquares` and `LeastAbsoluteDeviation`. 
-In order to use this, 
+Gradient boosting with a given base learner.
+Current loss functions covered are: `LeastSquares` and `LeastAbsoluteDeviation`.
+In order to use this,
 `ML.learner_fit` and `ML.learner_predict` functions must be extended.
-Example provided below for linear regression found in 
+Example provided below for linear regression found in
 [GLM.jl](https://github.com/JuliaStats/GLM.jl).
 ```julia
 import GLM: fit, predict, LinearModel
 
 # Extend functions
-function ML.learner_fit(lf::LossFunction, 
+function ML.learner_fit(lf::LossFunction,
   learner::Type{LinearModel}, instances, labels)
-  
+
   model = fit(learner, instances, labels)
 end
 function ML.learner_predict(lf::LossFunction,
   learner::Type{LinearModel}, model, instances)
-  
+
   predict(model, instances)
 end
 ```
 
-Once this is done, 
+Once this is done,
 the algorithm can be instantiated with the respective base learner.
 ```julia
 gbl = GBBL(
@@ -164,11 +167,11 @@ gbl = GBLearner(gbl, :regression)
 
 ## Gradient Boosting Framework
 
-All previously developed algorithms follow the framework 
-provided by `GradientBoost.GB`. 
+All previously developed algorithms follow the framework
+provided by `GradientBoost.GB`.
 
-As this package is in its preliminary stage, 
-major changes may occur in the near future and as such 
+As this package is in its preliminary stage,
+major changes may occur in the near future and as such
 we provide minimal README documentation.
 
 All of what is required to be implemented is exampled below:
@@ -197,7 +200,7 @@ function GB.build_base_func(
 end
 ```
 
-A relatively light algorithm 
+A relatively light algorithm
 that implements `GBAlgorithm` is `GBBL`, found in `src/gb_bl.jl`.
 
 ## Misc

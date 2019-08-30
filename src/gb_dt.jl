@@ -4,30 +4,33 @@ module GBDecisionTree
 using DecisionTree
 using DataStructures
 
-importall GradientBoost.GB
-importall GradientBoost.LossFunctions
+using GradientBoost.GB
+using GradientBoost.LossFunctions
+
+using Statistics
 
 export GBDT,
        build_base_func
 
 # Gradient boosted decision tree algorithm.
-type GBDT <: GBAlgorithm
+mutable struct GBDT{F <: AbstractFloat, D <: AbstractDict} <: GBAlgorithm
   loss_function::LossFunction
-  sampling_rate::FloatingPoint
-  learning_rate::FloatingPoint
+  sampling_rate::F
+  learning_rate::F
   num_iterations::Int
-  tree_options::Dict
+  tree_options::D
 
   function GBDT(;loss_function=LeastSquares(),
-    sampling_rate=0.6, learning_rate=0.1, 
+    sampling_rate=0.6, learning_rate=0.1,
     num_iterations=100, tree_options=Dict())
 
-    default_options = {
-      :maxlabels => 5,
+    default_options = Dict(
+      :maxdepth => 5,
       :nsubfeatures => 0
-    }
+    )
     options = merge(default_options, tree_options)
-    new(loss_function, sampling_rate, learning_rate, num_iterations, options)
+    # refer to https://discourse.julialang.org/t/how-to-resolve-syntax-too-few-type-parameters-specified-in-new/15766
+    new{typeof(sampling_rate), typeof(options)}(loss_function, sampling_rate, learning_rate, num_iterations, options)
   end
 end
 
@@ -40,14 +43,15 @@ function GB.build_base_func(
 
   # Train learner
   model = build_tree(
-    psuedo, instances, 
-    gb.tree_options[:maxlabels],
-    gb.tree_options[:nsubfeatures] 
+    psuedo, instances,
+    # refer to https://github.com/bensadeghi/DecisionTree.jl
+    gb.tree_options[:nsubfeatures],
+    gb.tree_options[:maxdepth]
   )
   psuedo_pred = apply_tree(model, instances)
 
   # Update regions (leaves)
-  # NOTE(svs14): Trees are immutable, 
+  # NOTE(svs14): Trees are immutable,
   #              override leaves by having node-to-val mapping.
   inst_node_index = InstanceNodeIndex(model, instances)
   function val_func(node)
@@ -87,14 +91,14 @@ end
 
 # DT Helper Functions
 
-type InstanceNodeIndex
+mutable struct InstanceNodeIndex
   i2n::Vector{Leaf}
   n2i::DefaultDict{Leaf, Vector{Int}}
 
-  function InstanceNodeIndex(tree::Union(Leaf,Node), instances)
+  function InstanceNodeIndex(tree::Union{Leaf,Node}, instances)
     num_instances = size(instances, 1)
-    i2n = Array(Leaf, num_instances)
-    n2i = DefaultDict(Leaf, Vector{Int}, () -> Int[])
+    i2n = Array{Leaf, 1}(undef, num_instances)
+    n2i = DefaultDict{Leaf, Vector{Int}}(Int[])
 
     for i = 1:num_instances
       node = instance_to_node(tree, instances[i,:])
@@ -122,11 +126,11 @@ end
 
 # Update region by having updated leaf value encoded
 # in a leaf-to-value mapping.
-function update_regions!{T}(n2v::Dict{Leaf, T}, node::Node, val_func::Function)
+function update_regions!(n2v::Dict{Leaf, T}, node::Node, val_func::Function) where T
   update_regions!(n2v, node.left, val_func)
   update_regions!(n2v, node.right, val_func)
 end
-function update_regions!{T}(n2v::Dict{Leaf, T}, leaf::Leaf, val_func::Function)
+function update_regions!(n2v::Dict{Leaf, T}, leaf::Leaf, val_func::Function) where T
   n2v[leaf] = val_func(leaf)
 end
 
@@ -137,6 +141,12 @@ function fit_best_constant(lf::LeastAbsoluteDeviation,
   values = labels .- prev_func_pred
   median(values)
 end
+"""
+    fit_best_constant(lf::BinomialDeviance, labels, psuedo, psuedo_pred, prev_func_pred)
+
+Solve ``\\arg\\min -( y(\\hat y+ γ) - \\log (1+\\exp(\\hat y+γ)))``, since no closed form, approximate
+it by a single Newton-Raphson step.
+"""
 function fit_best_constant(lf::BinomialDeviance,
   labels, psuedo, psuedo_pred, prev_func_pred)
 

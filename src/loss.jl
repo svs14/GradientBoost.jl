@@ -1,7 +1,8 @@
 # Loss functions.
 module LossFunctions
 
-importall GradientBoost.Util
+using Statistics
+using GradientBoost.Util
 
 export LossFunction,
        loss,
@@ -12,10 +13,10 @@ export LossFunction,
        BinomialDeviance
 
 # Loss function.
-abstract LossFunction
+abstract type LossFunction end
 
 # Calculates loss.
-# 
+#
 # @param lf Loss function.
 # @param y True response.
 # @param y_pred Approximated response.
@@ -38,7 +39,7 @@ negative_gradient(lf::LossFunction, y, y_pred) = err_must_be_overriden()
 minimizing_scalar(lf::LossFunction, y) = err_must_be_overriden()
 
 # LeastSquares
-type LeastSquares <: LossFunction; end
+struct LeastSquares <: LossFunction end
 
 function loss(lf::LeastSquares, y, y_pred)
   mean((y .- y_pred) .^ 2.0)
@@ -54,14 +55,14 @@ end
 
 
 # LeastAbsoluteDeviation
-type LeastAbsoluteDeviation <: LossFunction; end
+struct LeastAbsoluteDeviation <: LossFunction end
 
 function loss(lf::LeastAbsoluteDeviation, y, y_pred)
-  mean(abs(y .- y_pred))
+  mean(abs.(y .- y_pred))
 end
 
 function negative_gradient(lf::LeastAbsoluteDeviation, y, y_pred)
-  sign(y .- y_pred)
+  sign.(y .- y_pred)
 end
 
 function minimizing_scalar(lf::LeastAbsoluteDeviation, y)
@@ -70,20 +71,26 @@ end
 
 
 # Binomial Deviance (Two Classes {0,1})
-type BinomialDeviance <: LossFunction; end
+struct BinomialDeviance <: LossFunction end
 
+"""
+    loss(lf, y, y_pred)
+
+Calculate ``L(y, p(x)) = -\\sum_{k=1}^K I(y=G_k)\\log p_k(x)``, where
+``p_k(x) = \\exp(f_k(x)) / \\sum_{i=1}^K \\exp(f_i(x))``.
+"""
 function loss(lf::BinomialDeviance, y, y_pred)
-  -2.0 .* mean(y .* y_pred .- log(1.0 .+ exp(y_pred)))
+  -2.0 .* mean(y .* y_pred .- log.(1.0 .+ exp.(y_pred)))
 end
 
 function negative_gradient(lf::BinomialDeviance, y, y_pred)
-  y .- 1.0 ./ (1.0 .+ exp(-y_pred))
+  y .- 1.0 ./ (1.0 .+ exp.(-y_pred))
 end
 
 function minimizing_scalar(lf::BinomialDeviance, y)
   y_sum = sum(y)
   y_length = length(y)
-  log(y_sum / (y_length - y_sum))
+  log.(y_sum / (y_length - y_sum))
 end
 
 end # module

@@ -1,19 +1,21 @@
 module TestGBBaseLearner
 
-using FactCheck
-importall GradientBoost.GBBaseLearner
-importall GradientBoost.LossFunctions
+using Test
+using GradientBoost.GBBaseLearner
+using GradientBoost.LossFunctions
 
-type DummyLearner; end
-type StubLearner; end
+using Statistics
 
-function GBBaseLearner.learner_fit(lf::LossFunction, learner::StubLearner, 
+struct DummyLearner end
+struct StubLearner end
+
+function GBBaseLearner.learner_fit(lf::LossFunction, learner::StubLearner,
   instances, labels)
 
   return (instance) -> mean(instance)
 end
 
-function GBBaseLearner.learner_predict(lf::LossFunction, learner::StubLearner, 
+function GBBaseLearner.learner_predict(lf::LossFunction, learner::StubLearner,
   model, instances)
 
   pred_func = model
@@ -22,28 +24,28 @@ function GBBaseLearner.learner_predict(lf::LossFunction, learner::StubLearner,
   predictions = [pred_func(instances[i,:]) for i = 1:num_instances]
 end
 
-facts("GB Learner") do
-  context("not implemented functions throw an error") do
+@testset "GB Learner" begin
+  @testset "not implemented functions throw an error" begin
     dl = DummyLearner()
-    emp_mat = Array(Any, 1, 1)
-    emp_vec = Array[]
+    emp_mat = []
+    emp_vec = []
     dummy_model = emp_vec
 
-    @fact_throws learner_fit(
+    @test_throws ErrorException learner_fit(
       LeastSquares(),
-      dgb,
+      dl,
       emp_mat,
       emp_vec
     )
-    @fact_throws learner_predict(
+    @test_throws ErrorException learner_predict(
       LeastSquares(),
-      dgb,
+      dl,
       dummy_model,
       emp_mat
     )
   end
 
-  context("build_base_func works") do
+  @testset "build_base_func works" begin
     sl = StubLearner()
     gb = GBBL(sl)
     instances = [
@@ -55,7 +57,7 @@ facts("GB Learner") do
       6;
     ]
 
-    prev_func_pred = 
+    prev_func_pred =
       fill(minimizing_scalar(gb.loss_function, labels), size(instances, 1))
     psuedo = negative_gradient(
       gb.loss_function,
@@ -72,11 +74,11 @@ facts("GB Learner") do
     )
 
     predictions = base_func(instances)
-    expected = { 1.0, 3.0 }
-    @fact predictions => roughly(expected)
+    expected = [ 1.0, 3.0 ]
+    @test predictions ≈ expected
   end
 
-  context("LeastSquares fit_best_constant works") do
+  @testset "LeastSquares fit_best_constant works" begin
     lf = LeastSquares()
     dummy_vec = [0.0,0.0,0.0,0.0]
     expected = 1.0
@@ -84,9 +86,9 @@ facts("GB Learner") do
     actual = GBBaseLearner.fit_best_constant(
       lf, dummy_vec, dummy_vec, dummy_vec, dummy_vec
     )
-    @fact actual => expected
+    @test actual == expected
   end
-  context("LeastAbsoluteDeviation fit_best_constant works") do
+  @testset "LeastAbsoluteDeviation fit_best_constant works" begin
     lf = LeastAbsoluteDeviation()
     dummy_vec = [0.0,0.0,0.0,0.0]
     labels = [0.0,1.0,2.0,3.0]
@@ -97,13 +99,13 @@ facts("GB Learner") do
     actual = GBBaseLearner.fit_best_constant(
       lf, labels, dummy_vec, psuedo_pred, prev_func_pred
     )
-    @fact actual => roughly(expected)
+    @test actual ≈ expected atol=1e-6
   end
-  context("BinomialDeviance fit_best_constant throws error") do
+  @testset "BinomialDeviance fit_best_constant throws error" begin
     lf = BinomialDeviance()
     dummy_vec = [0.0,0.0,0.0,0.0]
 
-    @fact_throws GBBaseLearner.fit_best_constant(
+    @test_throws ErrorException GBBaseLearner.fit_best_constant(
       lf, dummy_vec, dummy_vec, dummy_vec, dummy_vec
     )
   end
