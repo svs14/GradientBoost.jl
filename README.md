@@ -1,8 +1,7 @@
 # GradientBoost
 
 Forked: [![Build Status](https://travis-ci.org/szcf-weiya/GradientBoost.jl.svg?branch=master)](https://travis-ci.org/szcf-weiya/GradientBoost.jl)
-[![Coverage Status](https://coveralls.io/repos/szcf-weiya/GradientBoost.jl/badge.png?branch=master)](https://coveralls.io/r/szcf-weiya/GradientBoost.jl?branch=master)
-
+[![Coverage Status](https://coveralls.io/repos/github/szcf-weiya/GradientBoost.jl/badge.svg)](https://coveralls.io/github/szcf-weiya/GradientBoost.jl)
 
 [![Build Status](https://travis-ci.org/svs14/GradientBoost.jl.svg?branch=master)](https://travis-ci.org/svs14/GradientBoost.jl)
 [![Coverage Status](https://coveralls.io/repos/svs14/GradientBoost.jl/badge.png?branch=master)](https://coveralls.io/r/svs14/GradientBoost.jl?branch=master)
