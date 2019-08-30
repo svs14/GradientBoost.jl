@@ -1,19 +1,21 @@
-language: cpp
-compiler:
-  - clang
+language: julia
+
+os:
+  - linux
+
+julia:
+  - 0.7
+  - 1.1
+  - nightly
+
+matrix:
+  allow_failures:
+    - julia: nightly
+
 notifications:
   email: false
-env:
-  matrix:
-    # - JULIAVERSION="juliareleases" Require Julia 0.3 or greater.
-    - JULIAVERSION="julianightlies"
-before_install:
-  - sudo add-apt-repository ppa:staticfloat/julia-deps -y
-  - sudo add-apt-repository ppa:staticfloat/${JULIAVERSION} -y
-  - sudo apt-get update -qq -y
-  - sudo apt-get install libpcre3-dev julia -y
-script:
-  - julia -e 'Pkg.init(); Pkg.clone(pwd())'
-  - julia --code-coverage test/runtests.jl
+
+sudo: false
+
 after_success:
-  - julia -e 'cd(Pkg.dir("GradientBoost")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(Coveralls.process_folder())'
+  - julia -e 'if VERSION >= v"0.7.0-" using Pkg end; cd(Pkg.dir("GradientBoost")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(Coveralls.process_folder())';
