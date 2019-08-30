@@ -4,7 +4,7 @@ os:
   - linux
 
 julia:
-  - 0.7
+  - 1.0
   - 1.1
   - nightly
 
@@ -18,4 +18,4 @@ notifications:
 sudo: false
 
 after_success:
-  - julia -e 'if VERSION >= v"0.7.0-" using Pkg end; cd(Pkg.dir("GradientBoost")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(Coveralls.process_folder())';
+  - julia -e 'if VERSION >= v"1.0.0-" using Pkg end; cd(Pkg.dir("GradientBoost")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(Coveralls.process_folder())';
